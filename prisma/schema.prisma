@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ApplicationStatus {
+  SAVED
+  APPLIED
+  RECRUITER_SCREEN
+  INTERVIEW
+  ASSESSMENT
+  OFFER
+  REJECTED
+  WITHDRAWN
+}
+
+enum WorkArrangement {
+  ONSITE
+  HYBRID
+  REMOTE
+}
+
+enum ActivityType {
+  NOTE
+  FOLLOW_UP
+  STATUS_CHANGE
+  INTERVIEW
+  EMAIL
+  CALL
+  OTHER
+}
+
+model Application {
+  id                 String            @id @default(cuid())
+  ownerId            String            @map("owner_id") @db.VarChar(255)
+  companyName        String            @map("company_name") @db.VarChar(120)
+  roleTitle          String            @map("role_title") @db.VarChar(160)
+  jobDescription     String?           @map("job_description") @db.Text
+  jobUrl             String?           @map("job_url") @db.VarChar(2048)
+  location           String?           @db.VarChar(160)
+  workArrangement    WorkArrangement?  @map("work_arrangement")
+  salaryMin          Int?              @map("salary_min")
+  salaryMax          Int?              @map("salary_max")
+  salaryCurrency     String            @default("USD") @map("salary_currency") @db.VarChar(3)
+  source             String?           @db.VarChar(100)
+  resumeVersion      String?           @map("resume_version") @db.VarChar(100)
+  status             ApplicationStatus @default(SAVED)
+  appliedAt          DateTime?         @map("applied_at")
+  followUpAt         DateTime?         @map("follow_up_at")
+  contactName        String?           @map("contact_name") @db.VarChar(120)
+  contactEmail       String?           @map("contact_email") @db.VarChar(254)
+  contactLinkedInUrl String?           @map("contact_linkedin_url") @db.VarChar(2048)
+  notes              String?           @db.Text
+  archivedAt         DateTime?         @map("archived_at")
+  createdAt          DateTime          @default(now()) @map("created_at")
+  updatedAt          DateTime          @updatedAt @map("updated_at")
+
+  activities ApplicationActivity[]
+
+  @@index([ownerId, archivedAt])
+  @@index([ownerId, status])
+  @@index([ownerId, followUpAt])
+  @@index([ownerId, appliedAt])
+  @@index([ownerId, companyName])
+  @@map("applications")
+}
+
+model ApplicationActivity {
+  id            String             @id @default(cuid())
+  applicationId String             @map("application_id")
+  type          ActivityType
+  title         String?            @db.VarChar(160)
+  description   String?            @db.Text
+  fromStatus    ApplicationStatus? @map("from_status")
+  toStatus      ApplicationStatus? @map("to_status")
+  occurredAt    DateTime           @default(now()) @map("occurred_at")
+  createdAt     DateTime           @default(now()) @map("created_at")
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId, occurredAt])
+  @@map("application_activities")
+}
