@@ -10,6 +10,48 @@ const initialState: ApplicationActionState = {
   status: "idle",
 };
 
+type ApplicationFormAction = (
+  previousState: ApplicationActionState,
+  formData: FormData,
+) => Promise<ApplicationActionState>;
+
+export type ApplicationFormValues = {
+  companyName?: string | null;
+  roleTitle?: string | null;
+  jobUrl?: string | null;
+  jobDescription?: string | null;
+  status?:
+    | "SAVED"
+    | "APPLIED"
+    | "RECRUITER_SCREEN"
+    | "INTERVIEW"
+    | "ASSESSMENT"
+    | "OFFER"
+    | "REJECTED"
+    | "WITHDRAWN";
+  workArrangement?: "ONSITE" | "HYBRID" | "REMOTE" | null;
+  location?: string | null;
+  source?: string | null;
+  appliedAt?: string | null;
+  followUpAt?: string | null;
+  salaryMin?: number | null;
+  salaryMax?: number | null;
+  salaryCurrency?: string | null;
+  resumeVersion?: string | null;
+  contactName?: string | null;
+  contactEmail?: string | null;
+  contactLinkedInUrl?: string | null;
+  notes?: string | null;
+};
+
+type ApplicationFormProps = {
+  action?: ApplicationFormAction;
+  initialValues?: ApplicationFormValues;
+  cancelHref?: string;
+  submitLabel?: string;
+  pendingLabel?: string;
+};
+
 type FieldErrorProps = {
   errors?: string[];
 };
@@ -31,11 +73,14 @@ const inputClasses =
 
 const labelClasses = "text-sm font-medium text-slate-200";
 
-export function ApplicationForm() {
-  const [state, formAction, isPending] = useActionState(
-    createApplication,
-    initialState,
-  );
+export function ApplicationForm({
+  action = createApplication,
+  initialValues = {},
+  cancelHref = "/dashboard",
+  submitLabel = "Save application",
+  pendingLabel = "Saving...",
+}: ApplicationFormProps) {
+  const [state, formAction, isPending] = useActionState(action, initialState);
 
   return (
     <form action={formAction} className="space-y-8">
@@ -53,6 +98,7 @@ export function ApplicationForm() {
           <h2 className="text-lg font-semibold text-white">
             Position information
           </h2>
+
           <p className="mt-1 text-sm text-slate-400">
             Add the company and position you are tracking.
           </p>
@@ -66,6 +112,7 @@ export function ApplicationForm() {
 
             <input
               className={inputClasses}
+              defaultValue={initialValues.companyName ?? ""}
               id="companyName"
               name="companyName"
               placeholder="Example Company"
@@ -83,6 +130,7 @@ export function ApplicationForm() {
 
             <input
               className={inputClasses}
+              defaultValue={initialValues.roleTitle ?? ""}
               id="roleTitle"
               name="roleTitle"
               placeholder="Software Engineer"
@@ -101,6 +149,7 @@ export function ApplicationForm() {
 
           <input
             className={inputClasses}
+            defaultValue={initialValues.jobUrl ?? ""}
             id="jobUrl"
             name="jobUrl"
             placeholder="https://company.com/jobs/..."
@@ -117,6 +166,7 @@ export function ApplicationForm() {
 
           <textarea
             className={`${inputClasses} min-h-40 resize-y`}
+            defaultValue={initialValues.jobDescription ?? ""}
             id="jobDescription"
             name="jobDescription"
             placeholder="Paste the job description here..."
@@ -131,6 +181,7 @@ export function ApplicationForm() {
           <h2 className="text-lg font-semibold text-white">
             Application details
           </h2>
+
           <p className="mt-1 text-sm text-slate-400">
             Record the current stage, location, and relevant dates.
           </p>
@@ -144,7 +195,7 @@ export function ApplicationForm() {
 
             <select
               className={inputClasses}
-              defaultValue="SAVED"
+              defaultValue={initialValues.status ?? "SAVED"}
               id="status"
               name="status"
             >
@@ -168,7 +219,7 @@ export function ApplicationForm() {
 
             <select
               className={inputClasses}
-              defaultValue=""
+              defaultValue={initialValues.workArrangement ?? ""}
               id="workArrangement"
               name="workArrangement"
             >
@@ -188,6 +239,7 @@ export function ApplicationForm() {
 
             <input
               className={inputClasses}
+              defaultValue={initialValues.location ?? ""}
               id="location"
               name="location"
               placeholder="Newark, NJ"
@@ -204,6 +256,7 @@ export function ApplicationForm() {
 
             <input
               className={inputClasses}
+              defaultValue={initialValues.source ?? ""}
               id="source"
               name="source"
               placeholder="LinkedIn, company website, referral..."
@@ -220,6 +273,7 @@ export function ApplicationForm() {
 
             <input
               className={inputClasses}
+              defaultValue={initialValues.appliedAt ?? ""}
               id="appliedAt"
               name="appliedAt"
               type="date"
@@ -235,6 +289,7 @@ export function ApplicationForm() {
 
             <input
               className={inputClasses}
+              defaultValue={initialValues.followUpAt ?? ""}
               id="followUpAt"
               name="followUpAt"
               type="date"
@@ -260,6 +315,7 @@ export function ApplicationForm() {
 
             <input
               className={inputClasses}
+              defaultValue={initialValues.salaryMin ?? ""}
               id="salaryMin"
               min="0"
               name="salaryMin"
@@ -278,6 +334,7 @@ export function ApplicationForm() {
 
             <input
               className={inputClasses}
+              defaultValue={initialValues.salaryMax ?? ""}
               id="salaryMax"
               min="0"
               name="salaryMax"
@@ -296,7 +353,7 @@ export function ApplicationForm() {
 
             <input
               className={inputClasses}
-              defaultValue="USD"
+              defaultValue={initialValues.salaryCurrency ?? "USD"}
               id="salaryCurrency"
               maxLength={3}
               name="salaryCurrency"
@@ -314,7 +371,7 @@ export function ApplicationForm() {
 
           <select
             className={inputClasses}
-            defaultValue=""
+            defaultValue={initialValues.resumeVersion ?? ""}
             id="resumeVersion"
             name="resumeVersion"
           >
@@ -345,6 +402,7 @@ export function ApplicationForm() {
 
             <input
               className={inputClasses}
+              defaultValue={initialValues.contactName ?? ""}
               id="contactName"
               name="contactName"
               placeholder="Recruiter or hiring manager"
@@ -361,6 +419,7 @@ export function ApplicationForm() {
 
             <input
               className={inputClasses}
+              defaultValue={initialValues.contactEmail ?? ""}
               id="contactEmail"
               name="contactEmail"
               placeholder="recruiter@company.com"
@@ -378,6 +437,7 @@ export function ApplicationForm() {
 
           <input
             className={inputClasses}
+            defaultValue={initialValues.contactLinkedInUrl ?? ""}
             id="contactLinkedInUrl"
             name="contactLinkedInUrl"
             placeholder="https://www.linkedin.com/in/..."
@@ -394,6 +454,7 @@ export function ApplicationForm() {
 
           <textarea
             className={`${inputClasses} min-h-32 resize-y`}
+            defaultValue={initialValues.notes ?? ""}
             id="notes"
             name="notes"
             placeholder="Referral information, interview details, follow-up notes..."
@@ -406,7 +467,7 @@ export function ApplicationForm() {
       <div className="flex items-center justify-end gap-3 border-t border-slate-800 pt-6">
         <Link
           className="rounded-lg px-4 py-2.5 text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white"
-          href="/dashboard"
+          href={cancelHref}
         >
           Cancel
         </Link>
@@ -416,7 +477,7 @@ export function ApplicationForm() {
           disabled={isPending}
           type="submit"
         >
-          {isPending ? "Saving..." : "Save application"}
+          {isPending ? pendingLabel : submitLabel}
         </button>
       </div>
     </form>
