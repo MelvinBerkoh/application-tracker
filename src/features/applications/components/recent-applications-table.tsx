@@ -97,8 +97,13 @@ export function RecentApplicationsTable({
                   className="transition hover:bg-slate-800/40"
                   key={application.id}
                 >
-                  <td className="px-5 py-4 font-medium text-white">
-                    {application.companyName}
+                  <td className="px-5 py-4 font-medium">
+                    <Link
+                      className="text-white transition hover:text-blue-400"
+                      href={`/applications/${application.id}`}
+                   >
+                     {application.companyName}
+                    </Link>
                   </td>
 
                   <td className="px-5 py-4 text-slate-300">
