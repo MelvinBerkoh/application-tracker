@@ -63,12 +63,21 @@ export default async function DashboardPage() {
             </p>
           </div>
 
-          <Link
-            className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
-            href="/applications/new"
-          >
-            Add application
-          </Link>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              className="inline-flex items-center justify-center rounded-lg border border-slate-700 px-5 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-600 hover:bg-slate-900"
+              href="/applications/archived"
+            >
+              Archived applications
+            </Link>
+
+            <Link
+              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
+              href="/applications/new"
+            >
+              Add application
+            </Link>
+          </div>
         </div>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

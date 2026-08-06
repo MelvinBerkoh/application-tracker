@@ -3,6 +3,8 @@ import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ArchiveApplicationButton } from "@/features/applications/components/archive-application-button";
+import { archiveApplication } from "@/features/applications/server/archive-application";
 import { getApplicationById } from "@/features/applications/server/get-application-by-id";
 
 type ApplicationDetailPageProps = {
@@ -106,6 +108,11 @@ export default async function ApplicationDetailPage({
   if (!application) {
     notFound();
   }
+
+  const archiveApplicationWithId = archiveApplication.bind(
+    null,
+    application.id,
+  );
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -362,6 +369,23 @@ export default async function ApplicationDetailPage({
                   ))}
                 </ol>
               )}
+            </section>
+
+            <section className="rounded-xl border border-red-950 bg-slate-900 p-6">
+              <h2 className="text-lg font-semibold text-white">
+                Danger zone
+              </h2>
+
+              <p className="mt-2 text-sm text-slate-400">
+                Archive this application to remove it from your active
+                dashboard.
+              </p>
+
+              <div className="mt-5">
+                <ArchiveApplicationButton
+                  archiveAction={archiveApplicationWithId}
+                />
+              </div>
             </section>
           </aside>
         </div>
