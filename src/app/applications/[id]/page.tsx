@@ -116,7 +116,7 @@ export default async function ApplicationDetailPage({
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-slate-800">
+      <header className="border-b border-slate-800/80 bg-slate-950/90">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link
             className="text-sm font-semibold uppercase tracking-widest text-blue-400 transition hover:text-blue-300"
@@ -129,53 +129,84 @@ export default async function ApplicationDetailPage({
         </div>
       </header>
 
-      <div className="mx-auto max-w-6xl px-6 py-10">
-        <Link
-          className="text-sm font-medium text-blue-400 transition hover:text-blue-300"
-          href="/dashboard"
-        >
-          ← Back to dashboard
-        </Link>
+      <div className="mx-auto max-w-6xl px-6 py-10 sm:py-12">
+        <nav className="flex flex-wrap items-center gap-2 text-sm">
+          <Link
+            className="text-slate-400 transition hover:text-white"
+            href="/dashboard"
+          >
+            Dashboard
+          </Link>
 
-        <section className="mt-6 flex flex-col gap-6 border-b border-slate-800 pb-8 md:flex-row md:items-start md:justify-between">
+          <span className="text-slate-700">/</span>
+
+          <Link
+            className="text-slate-400 transition hover:text-white"
+            href="/applications"
+          >
+            Applications
+          </Link>
+
+          <span className="text-slate-700">/</span>
+
+          <span className="max-w-64 truncate text-slate-200">
+            {application.companyName}
+          </span>
+        </nav>
+
+        <section className="mt-8 flex flex-col gap-6 border-b border-slate-800 pb-8 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-3xl font-bold md:text-4xl">
-                {application.roleTitle}
-              </h1>
-
+            <div className="mb-4 flex flex-wrap items-center gap-3">
               <span
-                className={`inline-flex rounded-full border px-3 py-1 text-xs font-medium ${
+                className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${
                   statusStyles[application.status]
                 }`}
               >
                 {statusLabels[application.status]}
               </span>
+
+              {application.workArrangement ? (
+                <span className="inline-flex rounded-full border border-slate-800 bg-slate-900 px-3 py-1 text-xs font-medium text-slate-400">
+                  {formatWorkArrangement(application.workArrangement)}
+                </span>
+              ) : null}
             </div>
 
-            <p className="mt-3 text-xl text-slate-300">
+            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              {application.roleTitle}
+            </h1>
+
+            <p className="mt-3 text-xl font-medium text-slate-300">
               {application.companyName}
             </p>
 
-            <p className="mt-2 text-sm text-slate-500">
-              Last updated {formatDate(application.updatedAt)}
-            </p>
+            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-sm text-slate-500">
+              <span>
+                {application.location || "Location not specified"}
+              </span>
+
+              <span aria-hidden="true">•</span>
+
+              <span>
+                Updated {formatDate(application.updatedAt)}
+              </span>
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-3">
             {application.jobUrl ? (
               <a
-                className="inline-flex items-center justify-center rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-600 hover:bg-slate-900"
+                className="inline-flex items-center justify-center rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:bg-slate-900 hover:text-white"
                 href={application.jobUrl}
                 rel="noreferrer"
                 target="_blank"
               >
-                View job posting
+                View posting ↗
               </a>
             ) : null}
 
             <Link
-              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
+              className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
               href={`/applications/${application.id}/edit`}
             >
               Edit application
@@ -183,131 +214,167 @@ export default async function ApplicationDetailPage({
           </div>
         </section>
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-[2fr_1fr]">
-          <div className="space-y-8">
-            <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-              <h2 className="text-lg font-semibold">
-                Application details
-              </h2>
+        <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <article className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Date applied
+            </p>
 
-              <dl className="mt-6 grid gap-6 sm:grid-cols-2">
+            <p className="mt-2 font-medium text-slate-100">
+              {formatDate(application.appliedAt)}
+            </p>
+          </article>
+
+          <article className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Follow-up
+            </p>
+
+            <p className="mt-2 font-medium text-slate-100">
+              {formatDate(application.followUpAt)}
+            </p>
+          </article>
+
+          <article className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Salary
+            </p>
+
+            <p className="mt-2 font-medium text-slate-100">
+              {formatSalary(
+                application.salaryMin,
+                application.salaryMax,
+                application.salaryCurrency,
+              )}
+            </p>
+          </article>
+
+          <article className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Résumé
+            </p>
+
+            <p className="mt-2 font-medium text-slate-100">
+              {displayValue(application.resumeVersion)}
+            </p>
+          </article>
+        </section>
+
+        <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+          <div className="space-y-6">
+            <section className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+              <div className="border-b border-slate-800 pb-4">
+                <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
+                  Opportunity
+                </p>
+
+                <h2 className="mt-2 text-xl font-semibold">
+                  Application details
+                </h2>
+              </div>
+
+              <dl className="mt-6 grid gap-x-8 gap-y-6 sm:grid-cols-2">
                 <div>
-                  <dt className="text-sm text-slate-400">Location</dt>
-                  <dd className="mt-1 text-slate-100">
+                  <dt className="text-sm text-slate-500">Location</dt>
+                  <dd className="mt-1 font-medium text-slate-100">
                     {displayValue(application.location)}
                   </dd>
                 </div>
 
                 <div>
-                  <dt className="text-sm text-slate-400">
+                  <dt className="text-sm text-slate-500">
                     Work arrangement
                   </dt>
-                  <dd className="mt-1 text-slate-100">
+                  <dd className="mt-1 font-medium text-slate-100">
                     {formatWorkArrangement(application.workArrangement)}
                   </dd>
                 </div>
 
                 <div>
-                  <dt className="text-sm text-slate-400">Date applied</dt>
-                  <dd className="mt-1 text-slate-100">
-                    {formatDate(application.appliedAt)}
-                  </dd>
-                </div>
-
-                <div>
-                  <dt className="text-sm text-slate-400">
-                    Follow-up date
-                  </dt>
-                  <dd className="mt-1 text-slate-100">
-                    {formatDate(application.followUpAt)}
-                  </dd>
-                </div>
-
-                <div>
-                  <dt className="text-sm text-slate-400">Salary</dt>
-                  <dd className="mt-1 text-slate-100">
-                    {formatSalary(
-                      application.salaryMin,
-                      application.salaryMax,
-                      application.salaryCurrency,
-                    )}
-                  </dd>
-                </div>
-
-                <div>
-                  <dt className="text-sm text-slate-400">
+                  <dt className="text-sm text-slate-500">
                     Application source
                   </dt>
-                  <dd className="mt-1 text-slate-100">
+                  <dd className="mt-1 font-medium text-slate-100">
                     {displayValue(application.source)}
                   </dd>
                 </div>
 
                 <div>
-                  <dt className="text-sm text-slate-400">
-                    Résumé version
-                  </dt>
-                  <dd className="mt-1 text-slate-100">
-                    {displayValue(application.resumeVersion)}
-                  </dd>
-                </div>
-
-                <div>
-                  <dt className="text-sm text-slate-400">Created</dt>
-                  <dd className="mt-1 text-slate-100">
+                  <dt className="text-sm text-slate-500">Created</dt>
+                  <dd className="mt-1 font-medium text-slate-100">
                     {formatDate(application.createdAt)}
                   </dd>
                 </div>
               </dl>
             </section>
 
-            <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-              <h2 className="text-lg font-semibold">Job description</h2>
+            <section className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+              <div className="border-b border-slate-800 pb-4">
+                <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
+                  Reference
+                </p>
+
+                <h2 className="mt-2 text-xl font-semibold">
+                  Job description
+                </h2>
+              </div>
 
               {application.jobDescription ? (
-                <p className="mt-4 whitespace-pre-wrap leading-7 text-slate-300">
+                <p className="mt-5 whitespace-pre-wrap leading-7 text-slate-300">
                   {application.jobDescription}
                 </p>
               ) : (
-                <p className="mt-4 text-slate-400">
-                  No job description was saved.
+                <p className="mt-5 text-sm text-slate-500">
+                  No job description was saved for this application.
                 </p>
               )}
             </section>
 
-            <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-              <h2 className="text-lg font-semibold">Notes</h2>
+            <section className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+              <div className="border-b border-slate-800 pb-4">
+                <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
+                  Personal
+                </p>
+
+                <h2 className="mt-2 text-xl font-semibold">Notes</h2>
+              </div>
 
               {application.notes ? (
-                <p className="mt-4 whitespace-pre-wrap leading-7 text-slate-300">
+                <p className="mt-5 whitespace-pre-wrap leading-7 text-slate-300">
                   {application.notes}
                 </p>
               ) : (
-                <p className="mt-4 text-slate-400">
-                  No notes have been added.
+                <p className="mt-5 text-sm text-slate-500">
+                  No private notes have been added yet.
                 </p>
               )}
             </section>
           </div>
 
-          <aside className="space-y-8">
-            <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-              <h2 className="text-lg font-semibold">Contact</h2>
+          <aside className="space-y-6">
+            <section className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+              <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
+                Contact
+              </p>
 
-              <dl className="mt-5 space-y-5">
+              <h2 className="mt-2 text-xl font-semibold">
+                Hiring contact
+              </h2>
+
+              <dl className="mt-6 space-y-5">
                 <div>
-                  <dt className="text-sm text-slate-400">Name</dt>
-                  <dd className="mt-1 text-slate-100">
+                  <dt className="text-sm text-slate-500">Name</dt>
+                  <dd className="mt-1 font-medium text-slate-100">
                     {displayValue(application.contactName)}
                   </dd>
                 </div>
 
                 <div>
-                  <dt className="text-sm text-slate-400">Email</dt>
-                  <dd className="mt-1 break-words text-slate-100">
+                  <dt className="text-sm text-slate-500">Email</dt>
+                  <dd className="mt-1 break-words font-medium text-slate-100">
                     {application.contactEmail ? (
                       <a
-                        className="text-blue-400 hover:text-blue-300"
+                        className="text-blue-400 transition hover:text-blue-300"
                         href={`mailto:${application.contactEmail}`}
                       >
                         {application.contactEmail}
@@ -319,50 +386,69 @@ export default async function ApplicationDetailPage({
                 </div>
 
                 <div>
-                  <dt className="text-sm text-slate-400">LinkedIn</dt>
-                  <dd className="mt-1 break-words text-slate-100">
+                  <dt className="text-sm text-slate-500">LinkedIn</dt>
+                  <dd className="mt-1 font-medium">
                     {application.contactLinkedInUrl ? (
                       <a
-                        className="text-blue-400 hover:text-blue-300"
+                        className="text-blue-400 transition hover:text-blue-300"
                         href={application.contactLinkedInUrl}
                         rel="noreferrer"
                         target="_blank"
                       >
-                        View profile
+                        View profile ↗
                       </a>
                     ) : (
-                      "Not specified"
+                      <span className="text-slate-100">
+                        Not specified
+                      </span>
                     )}
                   </dd>
                 </div>
               </dl>
             </section>
 
-            <section className="rounded-xl border border-slate-800 bg-slate-900 p-6">
-              <h2 className="text-lg font-semibold">Activity</h2>
+            <section className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
+                    History
+                  </p>
+
+                  <h2 className="mt-2 text-xl font-semibold">
+                    Activity
+                  </h2>
+                </div>
+
+                <span className="rounded-full bg-slate-800 px-2.5 py-1 text-xs font-medium text-slate-400">
+                  {application.activities.length}
+                </span>
+              </div>
 
               {application.activities.length === 0 ? (
-                <p className="mt-4 text-sm text-slate-400">
-                  No activity has been recorded yet.
+                <p className="mt-5 text-sm leading-6 text-slate-500">
+                  Activity will appear here when statuses or follow-ups
+                  change.
                 </p>
               ) : (
-                <ol className="mt-5 space-y-5">
+                <ol className="mt-6 space-y-5">
                   {application.activities.map((activity) => (
                     <li
-                      className="border-l border-slate-700 pl-4"
+                      className="relative border-l border-slate-700 pb-1 pl-5"
                       key={activity.id}
                     >
-                      <p className="font-medium text-slate-100">
+                      <span className="absolute -left-1.5 top-1 h-3 w-3 rounded-full border-2 border-slate-900 bg-blue-500" />
+
+                      <p className="text-sm font-semibold text-slate-100">
                         {activity.title || activity.type}
                       </p>
 
                       {activity.description ? (
-                        <p className="mt-1 text-sm text-slate-400">
+                        <p className="mt-1 text-sm leading-6 text-slate-400">
                           {activity.description}
                         </p>
                       ) : null}
 
-                      <p className="mt-2 text-xs text-slate-500">
+                      <p className="mt-2 text-xs text-slate-600">
                         {formatDate(activity.occurredAt)}
                       </p>
                     </li>
@@ -371,14 +457,18 @@ export default async function ApplicationDetailPage({
               )}
             </section>
 
-            <section className="rounded-xl border border-red-950 bg-slate-900 p-6">
-              <h2 className="text-lg font-semibold text-white">
+            <section className="rounded-2xl border border-red-950 bg-red-950/10 p-6">
+              <p className="text-xs font-semibold uppercase tracking-widest text-red-400">
                 Danger zone
+              </p>
+
+              <h2 className="mt-2 text-lg font-semibold text-white">
+                Archive application
               </h2>
 
-              <p className="mt-2 text-sm text-slate-400">
-                Archive this application to remove it from your active
-                dashboard.
+              <p className="mt-2 text-sm leading-6 text-slate-400">
+                Remove this opportunity from active views without deleting
+                its history or data.
               </p>
 
               <div className="mt-5">

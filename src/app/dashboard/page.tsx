@@ -24,112 +24,179 @@ export default async function DashboardPage() {
 
   const dashboardCards = [
     {
-      label: "Total Applications",
+      label: "Total applications",
+      description: "Active opportunities",
       value: stats.totalApplications,
+      href: "/applications",
     },
     {
-      label: "Active Interviews",
+      label: "Active interviews",
+      description: "In the hiring process",
       value: stats.activeInterviews,
+      href: null,
     },
     {
-      label: "Follow-Ups Due",
+      label: "Follow-ups due",
+      description: "Need your attention",
       value: stats.followUpsDue,
       href: "/applications/follow-ups",
     },
     {
       label: "Offers",
+      description: "Applications with offers",
       value: stats.offers,
+      href: "/applications?status=OFFER",
     },
   ];
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-slate-800">
+      <header className="border-b border-slate-800/80 bg-slate-950/90">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <p className="text-sm font-semibold uppercase tracking-widest text-blue-400">
+          <Link
+            className="text-sm font-semibold uppercase tracking-widest text-blue-400 transition hover:text-blue-300"
+            href="/dashboard"
+          >
             Application Tracker
-          </p>
+          </Link>
 
           <UserButton />
         </div>
       </header>
 
-      <section className="mx-auto max-w-6xl px-6 py-12">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mx-auto max-w-6xl px-6 py-10 sm:py-12">
+        <section className="flex flex-col gap-6 border-b border-slate-800 pb-8 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="text-4xl font-bold">Dashboard</h1>
+            <div className="mb-4 inline-flex rounded-full border border-blue-900 bg-blue-950/60 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-blue-300">
+              Overview
+            </div>
 
-            <p className="mt-4 text-slate-300">
-              Track your applications, interviews, and follow-ups in one place.
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              Dashboard
+            </h1>
+
+            <p className="mt-3 max-w-2xl text-base leading-7 text-slate-400">
+              Keep your job search organized, see what needs attention, and
+              move opportunities through the hiring process.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <Link
-              className="inline-flex items-center justify-center rounded-lg border border-slate-700 px-5 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-600 hover:bg-slate-900"
-              href="/applications"
-            >
-              View all applications
-            </Link>
+          <Link
+            className="inline-flex shrink-0 items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-950"
+            href="/applications/new"
+          >
+            + Add application
+          </Link>
+        </section>
 
-            <Link
-              className="inline-flex items-center justify-center rounded-lg border border-slate-700 px-5 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-600 hover:bg-slate-900"
-              href="/applications/archived"
-            >
-              Archived applications
-            </Link>
+        <nav className="mt-6 flex flex-wrap gap-3">
+          <Link
+            className="inline-flex items-center justify-center rounded-xl border border-slate-700 bg-slate-900/50 px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:bg-slate-900 hover:text-white"
+            href="/applications"
+          >
+            All applications
+          </Link>
 
-            <Link
-              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
-              href="/applications/new"
-            >
-              Add application
-            </Link>
-          </div>
-        </div>
+          <Link
+            className="inline-flex items-center justify-center rounded-xl border border-slate-700 bg-slate-900/50 px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:bg-slate-900 hover:text-white"
+            href="/applications/follow-ups"
+          >
+            Follow-ups
+          </Link>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {dashboardCards.map(({ label, value, href }) =>
-            href ? (
-              <Link
-                className="group rounded-xl border border-slate-800 bg-slate-900 p-5 transition hover:border-blue-800 hover:bg-slate-900/80"
-                href={href}
-                key={label}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-sm text-slate-400 transition group-hover:text-slate-300">
-                      {label}
-                    </p>
+          <Link
+            className="inline-flex items-center justify-center rounded-xl border border-slate-700 bg-slate-900/50 px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:bg-slate-900 hover:text-white"
+            href="/applications/archived"
+          >
+            Archived
+          </Link>
+        </nav>
 
-                    <p className="mt-2 text-3xl font-bold text-white">
+        <section className="mt-8">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {dashboardCards.map(
+              ({ label, description, value, href }) => {
+                const cardContent = (
+                  <>
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-slate-300">
+                          {label}
+                        </p>
+
+                        <p className="mt-1 text-xs text-slate-500">
+                          {description}
+                        </p>
+                      </div>
+
+                      {href ? (
+                        <span
+                          aria-hidden="true"
+                          className="text-slate-600 transition group-hover:translate-x-1 group-hover:text-blue-400"
+                        >
+                          →
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <p className="mt-5 text-3xl font-bold tracking-tight text-white">
                       {value}
                     </p>
-                  </div>
+                  </>
+                );
 
-                  <span
-                    aria-hidden="true"
-                    className="text-slate-600 transition group-hover:translate-x-1 group-hover:text-blue-400"
+                if (href) {
+                  return (
+                    <Link
+                      className="group rounded-2xl border border-slate-800 bg-slate-900/70 p-5 transition hover:border-blue-900 hover:bg-slate-900"
+                      href={href}
+                      key={label}
+                    >
+                      {cardContent}
+                    </Link>
+                  );
+                }
+
+                return (
+                  <article
+                    className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5"
+                    key={label}
                   >
-                    →
-                  </span>
-                </div>
-              </Link>
-            ) : (
-              <article
-                className="rounded-xl border border-slate-800 bg-slate-900 p-5"
-                key={label}
-              >
-                <p className="text-sm text-slate-400">{label}</p>
+                    {cardContent}
+                  </article>
+                );
+              },
+            )}
+          </div>
+        </section>
 
-                <p className="mt-2 text-3xl font-bold">{value}</p>
-              </article>
-            ),
-          )}
-        </div>
+        <section className="mt-10">
+          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
+                Pipeline
+              </p>
 
-        <RecentApplicationsTable applications={recentApplications} />
-      </section>
+              <h2 className="mt-2 text-2xl font-bold">
+                Recent applications
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-400">
+                Your most recently updated opportunities.
+              </p>
+            </div>
+
+            <Link
+              className="text-sm font-semibold text-blue-400 transition hover:text-blue-300"
+              href="/applications"
+            >
+              View all →
+            </Link>
+          </div>
+
+          <RecentApplicationsTable applications={recentApplications} />
+        </section>
+      </div>
     </main>
   );
 }

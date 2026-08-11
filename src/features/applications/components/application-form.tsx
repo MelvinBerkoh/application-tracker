@@ -56,22 +56,58 @@ type FieldErrorProps = {
   errors?: string[];
 };
 
+type FormSectionProps = {
+  number: string;
+  title: string;
+  description: string;
+  children: React.ReactNode;
+};
+
 function FieldError({ errors }: FieldErrorProps) {
   if (!errors?.length) {
     return null;
   }
 
   return (
-    <p className="mt-1 text-sm text-red-400" role="alert">
+    <p className="mt-2 text-sm font-medium text-red-400" role="alert">
       {errors[0]}
     </p>
   );
 }
 
+function FormSection({
+  number,
+  title,
+  description,
+  children,
+}: FormSectionProps) {
+  return (
+    <section className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5 sm:p-6">
+      <div className="mb-6 flex items-start gap-4">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-blue-900 bg-blue-950 text-sm font-semibold text-blue-300">
+          {number}
+        </div>
+
+        <div>
+          <h2 className="text-lg font-semibold text-white">{title}</h2>
+
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">
+            {description}
+          </p>
+        </div>
+      </div>
+
+      {children}
+    </section>
+  );
+}
+
 const inputClasses =
-  "mt-2 w-full rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20";
+  "mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-3 text-sm text-white shadow-sm outline-none transition placeholder:text-slate-600 hover:border-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20";
 
 const labelClasses = "text-sm font-medium text-slate-200";
+
+const helperClasses = "mt-1.5 text-xs leading-5 text-slate-500";
 
 export function ApplicationForm({
   action = createApplication,
@@ -83,31 +119,27 @@ export function ApplicationForm({
   const [state, formAction, isPending] = useActionState(action, initialState);
 
   return (
-    <form action={formAction} className="space-y-8">
+    <form action={formAction} className="space-y-6">
       {state.message ? (
         <div
-          className="rounded-lg border border-red-900 bg-red-950/50 px-4 py-3 text-sm text-red-300"
+          className="rounded-xl border border-red-900/80 bg-red-950/50 px-4 py-3 text-sm text-red-300"
           role="alert"
         >
-          {state.message}
+          <p className="font-medium">Something needs your attention</p>
+          <p className="mt-1 text-red-300/90">{state.message}</p>
         </div>
       ) : null}
 
-      <section className="space-y-5">
-        <div>
-          <h2 className="text-lg font-semibold text-white">
-            Position information
-          </h2>
-
-          <p className="mt-1 text-sm text-slate-400">
-            Add the company and position you are tracking.
-          </p>
-        </div>
-
+      <FormSection
+        description="Start with the essentials. These details identify the opportunity throughout your tracker."
+        number="1"
+        title="Position"
+      >
         <div className="grid gap-5 md:grid-cols-2">
           <div>
             <label className={labelClasses} htmlFor="companyName">
               Company name
+              <span className="ml-1 text-red-400">*</span>
             </label>
 
             <input
@@ -126,6 +158,7 @@ export function ApplicationForm({
           <div>
             <label className={labelClasses} htmlFor="roleTitle">
               Position title
+              <span className="ml-1 text-red-400">*</span>
             </label>
 
             <input
@@ -142,7 +175,7 @@ export function ApplicationForm({
           </div>
         </div>
 
-        <div>
+        <div className="mt-5">
           <label className={labelClasses} htmlFor="jobUrl">
             Job posting URL
           </label>
@@ -156,37 +189,40 @@ export function ApplicationForm({
             type="url"
           />
 
+          <p className={helperClasses}>
+            Save the original posting so you can reference it later.
+          </p>
+
           <FieldError errors={state.fieldErrors?.jobUrl} />
         </div>
 
-        <div>
+        <div className="mt-5">
           <label className={labelClasses} htmlFor="jobDescription">
             Job description
           </label>
 
           <textarea
-            className={`${inputClasses} min-h-40 resize-y`}
+            className={`${inputClasses} min-h-52 resize-y leading-6`}
             defaultValue={initialValues.jobDescription ?? ""}
             id="jobDescription"
             name="jobDescription"
             placeholder="Paste the job description here..."
           />
 
+          <p className={helperClasses}>
+            Keeping the description helps when preparing for interviews after
+            the posting disappears.
+          </p>
+
           <FieldError errors={state.fieldErrors?.jobDescription} />
         </div>
-      </section>
+      </FormSection>
 
-      <section className="space-y-5 border-t border-slate-800 pt-8">
-        <div>
-          <h2 className="text-lg font-semibold text-white">
-            Application details
-          </h2>
-
-          <p className="mt-1 text-sm text-slate-400">
-            Record the current stage, location, and relevant dates.
-          </p>
-        </div>
-
+      <FormSection
+        description="Track where the opportunity currently stands and when you need to take action."
+        number="2"
+        title="Application progress"
+      >
         <div className="grid gap-5 md:grid-cols-2">
           <div>
             <label className={labelClasses} htmlFor="status">
@@ -213,43 +249,6 @@ export function ApplicationForm({
           </div>
 
           <div>
-            <label className={labelClasses} htmlFor="workArrangement">
-              Work arrangement
-            </label>
-
-            <select
-              className={inputClasses}
-              defaultValue={initialValues.workArrangement ?? ""}
-              id="workArrangement"
-              name="workArrangement"
-            >
-              <option value="">Not specified</option>
-              <option value="ONSITE">On-site</option>
-              <option value="HYBRID">Hybrid</option>
-              <option value="REMOTE">Remote</option>
-            </select>
-
-            <FieldError errors={state.fieldErrors?.workArrangement} />
-          </div>
-
-          <div>
-            <label className={labelClasses} htmlFor="location">
-              Location
-            </label>
-
-            <input
-              className={inputClasses}
-              defaultValue={initialValues.location ?? ""}
-              id="location"
-              name="location"
-              placeholder="Newark, NJ"
-              type="text"
-            />
-
-            <FieldError errors={state.fieldErrors?.location} />
-          </div>
-
-          <div>
             <label className={labelClasses} htmlFor="source">
               Application source
             </label>
@@ -259,7 +258,7 @@ export function ApplicationForm({
               defaultValue={initialValues.source ?? ""}
               id="source"
               name="source"
-              placeholder="LinkedIn, company website, referral..."
+              placeholder="LinkedIn, company site, referral..."
               type="text"
             />
 
@@ -295,19 +294,66 @@ export function ApplicationForm({
               type="date"
             />
 
+            <p className={helperClasses}>
+              Use this to surface the application in your follow-up workflow.
+            </p>
+
             <FieldError errors={state.fieldErrors?.followUpAt} />
           </div>
         </div>
-      </section>
+      </FormSection>
 
-      <section className="space-y-5 border-t border-slate-800 pt-8">
-        <div>
-          <h2 className="text-lg font-semibold text-white">
-            Compensation and résumé
-          </h2>
+      <FormSection
+        description="Add location and work-arrangement details so opportunities are easier to compare."
+        number="3"
+        title="Location & work"
+      >
+        <div className="grid gap-5 md:grid-cols-2">
+          <div>
+            <label className={labelClasses} htmlFor="location">
+              Location
+            </label>
+
+            <input
+              className={inputClasses}
+              defaultValue={initialValues.location ?? ""}
+              id="location"
+              name="location"
+              placeholder="Newark, NJ"
+              type="text"
+            />
+
+            <FieldError errors={state.fieldErrors?.location} />
+          </div>
+
+          <div>
+            <label className={labelClasses} htmlFor="workArrangement">
+              Work arrangement
+            </label>
+
+            <select
+              className={inputClasses}
+              defaultValue={initialValues.workArrangement ?? ""}
+              id="workArrangement"
+              name="workArrangement"
+            >
+              <option value="">Not specified</option>
+              <option value="ONSITE">On-site</option>
+              <option value="HYBRID">Hybrid</option>
+              <option value="REMOTE">Remote</option>
+            </select>
+
+            <FieldError errors={state.fieldErrors?.workArrangement} />
+          </div>
         </div>
+      </FormSection>
 
-        <div className="grid gap-5 md:grid-cols-3">
+      <FormSection
+        description="Record the compensation range and the résumé version used for this application."
+        number="4"
+        title="Compensation & résumé"
+      >
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_140px]">
           <div>
             <label className={labelClasses} htmlFor="salaryMin">
               Minimum salary
@@ -352,7 +398,7 @@ export function ApplicationForm({
             </label>
 
             <input
-              className={inputClasses}
+              className={`${inputClasses} uppercase`}
               defaultValue={initialValues.salaryCurrency ?? "USD"}
               id="salaryCurrency"
               maxLength={3}
@@ -364,7 +410,7 @@ export function ApplicationForm({
           </div>
         </div>
 
-        <div>
+        <div className="mt-5">
           <label className={labelClasses} htmlFor="resumeVersion">
             Résumé version
           </label>
@@ -383,17 +429,20 @@ export function ApplicationForm({
             <option value="Adjacent Technical">Adjacent Technical</option>
           </select>
 
+          <p className={helperClasses}>
+            Track which résumé was submitted so you know what the employer
+            received.
+          </p>
+
           <FieldError errors={state.fieldErrors?.resumeVersion} />
         </div>
-      </section>
+      </FormSection>
 
-      <section className="space-y-5 border-t border-slate-800 pt-8">
-        <div>
-          <h2 className="text-lg font-semibold text-white">
-            Contact and notes
-          </h2>
-        </div>
-
+      <FormSection
+        description="Keep recruiter or hiring-manager information attached to the application."
+        number="5"
+        title="Contact"
+      >
         <div className="grid gap-5 md:grid-cols-2">
           <div>
             <label className={labelClasses} htmlFor="contactName">
@@ -430,7 +479,7 @@ export function ApplicationForm({
           </div>
         </div>
 
-        <div>
+        <div className="mt-5">
           <label className={labelClasses} htmlFor="contactLinkedInUrl">
             Contact LinkedIn URL
           </label>
@@ -446,39 +495,55 @@ export function ApplicationForm({
 
           <FieldError errors={state.fieldErrors?.contactLinkedInUrl} />
         </div>
+      </FormSection>
 
+      <FormSection
+        description="Capture anything useful for future follow-ups, interviews, or decision-making."
+        number="6"
+        title="Notes"
+      >
         <div>
           <label className={labelClasses} htmlFor="notes">
-            Notes
+            Private notes
           </label>
 
           <textarea
-            className={`${inputClasses} min-h-32 resize-y`}
+            className={`${inputClasses} min-h-40 resize-y leading-6`}
             defaultValue={initialValues.notes ?? ""}
             id="notes"
             name="notes"
-            placeholder="Referral information, interview details, follow-up notes..."
+            placeholder="Referral details, interview notes, recruiter conversations, next steps..."
           />
+
+          <p className={helperClasses}>
+            These notes stay attached to this application in your tracker.
+          </p>
 
           <FieldError errors={state.fieldErrors?.notes} />
         </div>
-      </section>
+      </FormSection>
 
-      <div className="flex items-center justify-end gap-3 border-t border-slate-800 pt-6">
-        <Link
-          className="rounded-lg px-4 py-2.5 text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white"
-          href={cancelHref}
-        >
-          Cancel
-        </Link>
+      <div className="flex flex-col-reverse gap-3 rounded-2xl border border-slate-800 bg-slate-950/70 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-xs text-slate-500">
+          <span className="text-red-400">*</span> Required fields
+        </p>
 
-        <button
-          className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
-          disabled={isPending}
-          type="submit"
-        >
-          {isPending ? pendingLabel : submitLabel}
-        </button>
+        <div className="flex flex-col-reverse gap-3 sm:flex-row">
+          <Link
+            className="inline-flex items-center justify-center rounded-xl border border-slate-700 px-5 py-3 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:bg-slate-800 hover:text-white"
+            href={cancelHref}
+          >
+            Cancel
+          </Link>
+
+          <button
+            className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={isPending}
+            type="submit"
+          >
+            {isPending ? pendingLabel : submitLabel}
+          </button>
+        </div>
       </div>
     </form>
   );
