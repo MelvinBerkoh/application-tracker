@@ -34,6 +34,7 @@ export default async function DashboardPage() {
     {
       label: "Follow-Ups Due",
       value: stats.followUpsDue,
+      href: "/applications/follow-ups",
     },
     {
       label: "Offers",
@@ -88,15 +89,43 @@ export default async function DashboardPage() {
         </div>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {dashboardCards.map(({ label, value }) => (
-            <article
-              className="rounded-xl border border-slate-800 bg-slate-900 p-5"
-              key={label}
-            >
-              <p className="text-sm text-slate-400">{label}</p>
-              <p className="mt-2 text-3xl font-bold">{value}</p>
-            </article>
-          ))}
+          {dashboardCards.map(({ label, value, href }) =>
+            href ? (
+              <Link
+                className="group rounded-xl border border-slate-800 bg-slate-900 p-5 transition hover:border-blue-800 hover:bg-slate-900/80"
+                href={href}
+                key={label}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-sm text-slate-400 transition group-hover:text-slate-300">
+                      {label}
+                    </p>
+
+                    <p className="mt-2 text-3xl font-bold text-white">
+                      {value}
+                    </p>
+                  </div>
+
+                  <span
+                    aria-hidden="true"
+                    className="text-slate-600 transition group-hover:translate-x-1 group-hover:text-blue-400"
+                  >
+                    →
+                  </span>
+                </div>
+              </Link>
+            ) : (
+              <article
+                className="rounded-xl border border-slate-800 bg-slate-900 p-5"
+                key={label}
+              >
+                <p className="text-sm text-slate-400">{label}</p>
+
+                <p className="mt-2 text-3xl font-bold">{value}</p>
+              </article>
+            ),
+          )}
         </div>
 
         <RecentApplicationsTable applications={recentApplications} />
