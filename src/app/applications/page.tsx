@@ -122,7 +122,7 @@ export default async function ApplicationsPage({
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-slate-800">
+      <header className="border-b border-slate-800/80 bg-slate-950/90">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link
             className="text-sm font-semibold uppercase tracking-widest text-blue-400 transition hover:text-blue-300"
@@ -135,43 +135,71 @@ export default async function ApplicationsPage({
         </div>
       </header>
 
-      <div className="mx-auto max-w-7xl px-6 py-10">
-        <Link
-          className="text-sm font-medium text-blue-400 transition hover:text-blue-300"
-          href="/dashboard"
-        >
-          ← Back to dashboard
-        </Link>
+      <div className="mx-auto max-w-7xl px-6 py-10 sm:py-12">
+        <nav className="flex flex-wrap items-center gap-2 text-sm">
+          <Link
+            className="text-slate-400 transition hover:text-white"
+            href="/dashboard"
+          >
+            Dashboard
+          </Link>
 
-        <section className="mt-6 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+          <span className="text-slate-700">/</span>
+
+          <span className="text-slate-200">Applications</span>
+        </nav>
+
+        <section className="mt-8 flex flex-col gap-6 border-b border-slate-800 pb-8 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h1 className="text-3xl font-bold md:text-4xl">
+            <div className="mb-4 inline-flex rounded-full border border-blue-900 bg-blue-950/60 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-blue-300">
+              Pipeline
+            </div>
+
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
               All applications
             </h1>
 
-            <p className="mt-2 text-slate-400">
-              Search, filter, and review every active opportunity.
+            <p className="mt-3 max-w-2xl text-base leading-7 text-slate-400">
+              Search your pipeline, focus on a hiring stage, and quickly open
+              any opportunity that needs attention.
             </p>
           </div>
 
           <div className="flex flex-wrap gap-3">
             <Link
-              className="inline-flex items-center justify-center rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-slate-600 hover:bg-slate-900"
+              className="inline-flex items-center justify-center rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:bg-slate-900 hover:text-white"
               href="/applications/archived"
             >
-              Archived applications
+              Archived
             </Link>
 
             <Link
-              className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
+              className="inline-flex items-center justify-center rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:bg-slate-900 hover:text-white"
+              href="/applications/follow-ups"
+            >
+              Follow-ups
+            </Link>
+
+            <Link
+              className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
               href="/applications/new"
             >
-              Add application
+              + Add application
             </Link>
           </div>
         </section>
 
-        <section className="mt-8 rounded-xl border border-slate-800 bg-slate-900 p-5">
+        <section className="mt-8 rounded-2xl border border-slate-800 bg-slate-900/60 p-5 sm:p-6">
+          <div className="mb-5">
+            <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
+              Filters
+            </p>
+
+            <h2 className="mt-2 text-lg font-semibold text-white">
+              Find an application
+            </h2>
+          </div>
+
           <form
             className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_220px_220px_auto]"
             method="get"
@@ -185,7 +213,7 @@ export default async function ApplicationsPage({
               </label>
 
               <input
-                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 hover:border-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                 defaultValue={query}
                 id="query"
                 name="query"
@@ -203,7 +231,7 @@ export default async function ApplicationsPage({
               </label>
 
               <select
-                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-3 text-sm text-white outline-none transition hover:border-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                 defaultValue={status ?? ""}
                 id="status"
                 name="status"
@@ -230,7 +258,7 @@ export default async function ApplicationsPage({
               </label>
 
               <select
-                className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2.5 text-sm text-white outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                className="mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 px-3.5 py-3 text-sm text-white outline-none transition hover:border-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
                 defaultValue={sort}
                 id="sort"
                 name="sort"
@@ -243,7 +271,7 @@ export default async function ApplicationsPage({
 
             <div className="flex items-end gap-3">
               <button
-                className="inline-flex flex-1 items-center justify-center rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
+                className="inline-flex flex-1 items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-500"
                 type="submit"
               >
                 Apply
@@ -251,7 +279,7 @@ export default async function ApplicationsPage({
 
               {filtersAreActive ? (
                 <Link
-                  className="inline-flex items-center justify-center rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:bg-slate-800 hover:text-white"
+                  className="inline-flex items-center justify-center rounded-xl border border-slate-700 px-4 py-3 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:bg-slate-800 hover:text-white"
                   href="/applications"
                 >
                   Clear
@@ -261,44 +289,54 @@ export default async function ApplicationsPage({
           </form>
         </section>
 
-        <section className="mt-8 overflow-hidden rounded-xl border border-slate-800 bg-slate-900">
-          <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4">
+        <section className="mt-8 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/60">
+          <div className="flex flex-col gap-3 border-b border-slate-800 px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-lg font-semibold">Applications</h2>
+              <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
+                Results
+              </p>
+
+              <h2 className="mt-2 text-xl font-semibold text-white">
+                Applications
+              </h2>
 
               <p className="mt-1 text-sm text-slate-400">
-                Active applications matching your current filters.
+                Active opportunities matching your current view.
               </p>
             </div>
 
-            <span className="text-sm text-slate-400">
+            <div className="rounded-full border border-slate-800 bg-slate-950 px-3 py-1.5 text-sm font-medium text-slate-400">
               {applications.length}{" "}
               {applications.length === 1 ? "result" : "results"}
-            </span>
+            </div>
           </div>
 
           {applications.length === 0 ? (
-            <div className="px-6 py-14 text-center">
-              <h3 className="text-lg font-semibold">
+            <div className="px-6 py-16 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-slate-800 bg-slate-950 text-xl text-slate-500">
+                ⌕
+              </div>
+
+              <h3 className="mt-5 text-lg font-semibold text-white">
                 No applications found
               </h3>
 
-              <p className="mt-2 text-sm text-slate-400">
+              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-400">
                 {filtersAreActive
-                  ? "Try changing or clearing the current filters."
-                  : "Add your first application to begin tracking opportunities."}
+                  ? "Nothing matches the current filters. Try widening the search or clearing them."
+                  : "Your active applications will appear here once you add an opportunity."}
               </p>
 
               {filtersAreActive ? (
                 <Link
-                  className="mt-5 inline-flex rounded-lg border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-slate-800"
+                  className="mt-5 inline-flex rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-slate-800"
                   href="/applications"
                 >
                   Clear filters
                 </Link>
               ) : (
                 <Link
-                  className="mt-5 inline-flex rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
+                  className="mt-5 inline-flex rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
                   href="/applications/new"
                 >
                   Add application
@@ -308,18 +346,14 @@ export default async function ApplicationsPage({
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[1050px] text-left">
-                <thead className="bg-slate-950/50 text-xs uppercase tracking-wide text-slate-400">
+                <thead className="bg-slate-950/60 text-xs uppercase tracking-wide text-slate-500">
                   <tr>
                     <th className="px-5 py-3 font-medium">Company</th>
                     <th className="px-5 py-3 font-medium">Position</th>
                     <th className="px-5 py-3 font-medium">Status</th>
                     <th className="px-5 py-3 font-medium">Location</th>
-                    <th className="px-5 py-3 font-medium">
-                      Arrangement
-                    </th>
-                    <th className="px-5 py-3 font-medium">
-                      Date applied
-                    </th>
+                    <th className="px-5 py-3 font-medium">Arrangement</th>
+                    <th className="px-5 py-3 font-medium">Date applied</th>
                     <th className="px-5 py-3 font-medium">Follow-up</th>
                   </tr>
                 </thead>
@@ -327,12 +361,12 @@ export default async function ApplicationsPage({
                 <tbody className="divide-y divide-slate-800">
                   {applications.map((application) => (
                     <tr
-                      className="transition hover:bg-slate-800/40"
+                      className="group transition hover:bg-slate-800/30"
                       key={application.id}
                     >
-                      <td className="px-5 py-4 font-medium">
+                      <td className="px-5 py-4">
                         <Link
-                          className="text-white transition hover:text-blue-400"
+                          className="font-semibold text-white transition group-hover:text-blue-300"
                           href={`/applications/${application.id}`}
                         >
                           {application.companyName}
