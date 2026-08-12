@@ -344,71 +344,162 @@ export default async function ApplicationsPage({
               )}
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[1050px] text-left">
-                <thead className="bg-slate-950/60 text-xs uppercase tracking-wide text-slate-500">
-                  <tr>
-                    <th className="px-5 py-3 font-medium">Company</th>
-                    <th className="px-5 py-3 font-medium">Position</th>
-                    <th className="px-5 py-3 font-medium">Status</th>
-                    <th className="px-5 py-3 font-medium">Location</th>
-                    <th className="px-5 py-3 font-medium">Arrangement</th>
-                    <th className="px-5 py-3 font-medium">Date applied</th>
-                    <th className="px-5 py-3 font-medium">Follow-up</th>
-                  </tr>
-                </thead>
-
-                <tbody className="divide-y divide-slate-800">
-                  {applications.map((application) => (
-                    <tr
-                      className="group transition hover:bg-slate-800/30"
-                      key={application.id}
-                    >
-                      <td className="px-5 py-4">
-                        <Link
-                          className="font-semibold text-white transition group-hover:text-blue-300"
-                          href={`/applications/${application.id}`}
-                        >
+            <>
+              <div className="divide-y divide-slate-800 md:hidden">
+                {applications.map((application) => (
+                  <Link
+                    className="block p-5 transition active:bg-slate-800/40"
+                    href={`/applications/${application.id}`}
+                    key={application.id}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <p className="truncate font-semibold text-white">
                           {application.companyName}
-                        </Link>
-                      </td>
+                        </p>
 
-                      <td className="px-5 py-4 text-slate-300">
-                        {application.roleTitle}
-                      </td>
+                        <p className="mt-1 text-sm leading-6 text-slate-300">
+                          {application.roleTitle}
+                        </p>
+                      </div>
 
-                      <td className="px-5 py-4">
-                        <span
-                          className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${
-                            statusStyles[application.status]
-                          }`}
-                        >
-                          {statusLabels[application.status]}
-                        </span>
-                      </td>
+                      <span
+                        aria-hidden="true"
+                        className="shrink-0 text-slate-600"
+                      >
+                        →
+                      </span>
+                    </div>
 
-                      <td className="px-5 py-4 text-slate-400">
-                        {application.location || "Not specified"}
-                      </td>
+                    <div className="mt-4">
+                      <span
+                        className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${
+                          statusStyles[application.status]
+                        }`}
+                      >
+                        {statusLabels[application.status]}
+                      </span>
+                    </div>
 
-                      <td className="px-5 py-4 text-slate-400">
-                        {formatWorkArrangement(
-                          application.workArrangement,
-                        )}
-                      </td>
+                    <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4">
+                      <div>
+                        <dt className="text-xs font-medium uppercase tracking-wide text-slate-600">
+                          Location
+                        </dt>
 
-                      <td className="px-5 py-4 text-slate-400">
-                        {formatDate(application.appliedAt)}
-                      </td>
+                        <dd className="mt-1 text-sm text-slate-300">
+                          {application.location || "Not specified"}
+                        </dd>
+                      </div>
 
-                      <td className="px-5 py-4 text-slate-400">
-                        {formatDate(application.followUpAt)}
-                      </td>
+                      <div>
+                        <dt className="text-xs font-medium uppercase tracking-wide text-slate-600">
+                          Arrangement
+                        </dt>
+
+                        <dd className="mt-1 text-sm text-slate-300">
+                          {formatWorkArrangement(
+                            application.workArrangement,
+                          )}
+                        </dd>
+                      </div>
+
+                      <div>
+                        <dt className="text-xs font-medium uppercase tracking-wide text-slate-600">
+                          Applied
+                        </dt>
+
+                        <dd className="mt-1 text-sm text-slate-300">
+                          {formatDate(application.appliedAt)}
+                        </dd>
+                      </div>
+
+                      <div>
+                        <dt className="text-xs font-medium uppercase tracking-wide text-slate-600">
+                          Follow-up
+                        </dt>
+
+                        <dd className="mt-1 text-sm text-slate-300">
+                          {formatDate(application.followUpAt)}
+                        </dd>
+                      </div>
+                    </dl>
+                  </Link>
+                ))}
+              </div>
+
+              <div className="hidden overflow-x-auto md:block">
+                <table className="w-full min-w-[1050px] text-left">
+                  <thead className="bg-slate-950/60 text-xs uppercase tracking-wide text-slate-500">
+                    <tr>
+                      <th className="px-5 py-3 font-medium">Company</th>
+                      <th className="px-5 py-3 font-medium">Position</th>
+                      <th className="px-5 py-3 font-medium">Status</th>
+                      <th className="px-5 py-3 font-medium">Location</th>
+                      <th className="px-5 py-3 font-medium">
+                        Arrangement
+                      </th>
+                      <th className="px-5 py-3 font-medium">
+                        Date applied
+                      </th>
+                      <th className="px-5 py-3 font-medium">
+                        Follow-up
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+
+                  <tbody className="divide-y divide-slate-800">
+                    {applications.map((application) => (
+                      <tr
+                        className="group transition hover:bg-slate-800/30"
+                        key={application.id}
+                      >
+                        <td className="px-5 py-4">
+                          <Link
+                            className="font-semibold text-white transition group-hover:text-blue-300"
+                            href={`/applications/${application.id}`}
+                          >
+                            {application.companyName}
+                          </Link>
+                        </td>
+
+                        <td className="px-5 py-4 text-slate-300">
+                          {application.roleTitle}
+                        </td>
+
+                        <td className="px-5 py-4">
+                          <span
+                            className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${
+                              statusStyles[application.status]
+                            }`}
+                          >
+                            {statusLabels[application.status]}
+                          </span>
+                        </td>
+
+                        <td className="px-5 py-4 text-slate-400">
+                          {application.location || "Not specified"}
+                        </td>
+
+                        <td className="px-5 py-4 text-slate-400">
+                          {formatWorkArrangement(
+                            application.workArrangement,
+                          )}
+                        </td>
+
+                        <td className="px-5 py-4 text-slate-400">
+                          {formatDate(application.appliedAt)}
+                        </td>
+
+                        <td className="px-5 py-4 text-slate-400">
+                          {formatDate(application.followUpAt)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </section>
       </div>

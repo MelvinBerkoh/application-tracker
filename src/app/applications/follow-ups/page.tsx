@@ -133,83 +133,174 @@ function FollowUpSection({
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[1100px] text-left">
-            <thead className="bg-slate-950/60 text-xs uppercase tracking-wide text-slate-500">
-              <tr>
-                <th className="px-5 py-3 font-medium">Company</th>
-                <th className="px-5 py-3 font-medium">Position</th>
-                <th className="px-5 py-3 font-medium">Status</th>
-                <th className="px-5 py-3 font-medium">Location</th>
-                <th className="px-5 py-3 font-medium">Applied</th>
-                <th className="px-5 py-3 font-medium">Follow-up</th>
-                <th className="px-5 py-3 font-medium">Manage</th>
-              </tr>
-            </thead>
+        <>
+          <div className="divide-y divide-slate-800 md:hidden">
+            {applications.map((application) => {
+              const updateFollowUpWithId = updateFollowUp.bind(
+                null,
+                application.id,
+              );
 
-            <tbody className="divide-y divide-slate-800">
-              {applications.map((application) => {
-                const updateFollowUpWithId = updateFollowUp.bind(
-                  null,
-                  application.id,
-                );
-
-                return (
-                  <tr
-                    className="group align-top transition hover:bg-slate-800/30"
-                    key={application.id}
-                  >
-                    <td className="px-5 py-4">
+              return (
+                <article className="p-5" key={application.id}>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
                       <Link
-                        className="font-semibold text-white transition group-hover:text-blue-300"
+                        className="font-semibold text-white transition hover:text-blue-300"
                         href={`/applications/${application.id}`}
                       >
                         {application.companyName}
                       </Link>
-                    </td>
 
-                    <td className="px-5 py-4 text-slate-300">
-                      {application.roleTitle}
-                    </td>
+                      <p className="mt-1 text-sm leading-6 text-slate-300">
+                        {application.roleTitle}
+                      </p>
+                    </div>
 
-                    <td className="px-5 py-4">
-                      <span
-                        className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${
-                          statusStyles[application.status]
-                        }`}
-                      >
-                        {statusLabels[application.status]}
-                      </span>
-                    </td>
+                    <Link
+                      aria-label={`View ${application.companyName} application`}
+                      className="shrink-0 text-slate-600 transition hover:text-blue-400"
+                      href={`/applications/${application.id}`}
+                    >
+                      →
+                    </Link>
+                  </div>
 
-                    <td className="px-5 py-4 text-slate-400">
-                      {application.location || "Not specified"}
-                    </td>
+                  <div className="mt-4">
+                    <span
+                      className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${
+                        statusStyles[application.status]
+                      }`}
+                    >
+                      {statusLabels[application.status]}
+                    </span>
+                  </div>
 
-                    <td className="px-5 py-4 text-slate-400">
-                      {formatDate(application.appliedAt)}
-                    </td>
+                  <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4">
+                    <div>
+                      <dt className="text-xs font-medium uppercase tracking-wide text-slate-600">
+                        Location
+                      </dt>
 
-                    <td className="px-5 py-4">
-                      <span className="font-medium text-slate-200">
+                      <dd className="mt-1 text-sm text-slate-300">
+                        {application.location || "Not specified"}
+                      </dd>
+                    </div>
+
+                    <div>
+                      <dt className="text-xs font-medium uppercase tracking-wide text-slate-600">
+                        Applied
+                      </dt>
+
+                      <dd className="mt-1 text-sm text-slate-300">
+                        {formatDate(application.appliedAt)}
+                      </dd>
+                    </div>
+
+                    <div className="col-span-2">
+                      <dt className="text-xs font-medium uppercase tracking-wide text-slate-600">
+                        Follow-up date
+                      </dt>
+
+                      <dd className="mt-1 text-sm font-semibold text-slate-100">
                         {formatDate(application.followUpAt)}
-                      </span>
-                    </td>
+                      </dd>
+                    </div>
+                  </dl>
 
-                    <td className="px-5 py-4">
-                      <div className="min-w-[220px]">
-                        <FollowUpActions
-                          currentFollowUpAt={application.followUpAt}
-                          updateAction={updateFollowUpWithId}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                  <div className="mt-5 border-t border-slate-800 pt-5">
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                      Manage follow-up
+                    </p>
+
+                    <FollowUpActions
+                      currentFollowUpAt={application.followUpAt}
+                      updateAction={updateFollowUpWithId}
+                    />
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          <div className="hidden overflow-x-auto md:block">
+            <table className="w-full min-w-[1100px] text-left">
+              <thead className="bg-slate-950/60 text-xs uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th className="px-5 py-3 font-medium">Company</th>
+                  <th className="px-5 py-3 font-medium">Position</th>
+                  <th className="px-5 py-3 font-medium">Status</th>
+                  <th className="px-5 py-3 font-medium">Location</th>
+                  <th className="px-5 py-3 font-medium">Applied</th>
+                  <th className="px-5 py-3 font-medium">Follow-up</th>
+                  <th className="px-5 py-3 font-medium">Manage</th>
+                </tr>
+              </thead>
+
+              <tbody className="divide-y divide-slate-800">
+                {applications.map((application) => {
+                  const updateFollowUpWithId = updateFollowUp.bind(
+                    null,
+                    application.id,
+                  );
+
+                  return (
+                    <tr
+                      className="group align-top transition hover:bg-slate-800/30"
+                      key={application.id}
+                    >
+                      <td className="px-5 py-4">
+                        <Link
+                          className="font-semibold text-white transition group-hover:text-blue-300"
+                          href={`/applications/${application.id}`}
+                        >
+                          {application.companyName}
+                        </Link>
+                      </td>
+
+                      <td className="px-5 py-4 text-slate-300">
+                        {application.roleTitle}
+                      </td>
+
+                      <td className="px-5 py-4">
+                        <span
+                          className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${
+                            statusStyles[application.status]
+                          }`}
+                        >
+                          {statusLabels[application.status]}
+                        </span>
+                      </td>
+
+                      <td className="px-5 py-4 text-slate-400">
+                        {application.location || "Not specified"}
+                      </td>
+
+                      <td className="px-5 py-4 text-slate-400">
+                        {formatDate(application.appliedAt)}
+                      </td>
+
+                      <td className="px-5 py-4">
+                        <span className="font-medium text-slate-200">
+                          {formatDate(application.followUpAt)}
+                        </span>
+                      </td>
+
+                      <td className="px-5 py-4">
+                        <div className="min-w-[220px]">
+                          <FollowUpActions
+                            currentFollowUpAt={application.followUpAt}
+                            updateAction={updateFollowUpWithId}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </section>
   );

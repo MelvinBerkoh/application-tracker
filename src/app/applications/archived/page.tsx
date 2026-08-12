@@ -171,73 +171,128 @@ export default async function ArchivedApplicationsPage() {
               </Link>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-left">
-                <thead className="bg-slate-950/60 text-xs uppercase tracking-wide text-slate-500">
-                  <tr>
-                    <th className="px-5 py-3 font-medium">Company</th>
-                    <th className="px-5 py-3 font-medium">Position</th>
-                    <th className="px-5 py-3 font-medium">Status</th>
-                    <th className="px-5 py-3 font-medium">Archived</th>
-                    <th className="px-5 py-3 text-right font-medium">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
+            <>
+              <div className="divide-y divide-slate-800 md:hidden">
+                {applications.map((application) => {
+                  const restoreApplicationWithId =
+                    restoreApplication.bind(null, application.id);
 
-                <tbody className="divide-y divide-slate-800">
-                  {applications.map((application) => {
-                    const restoreApplicationWithId =
-                      restoreApplication.bind(null, application.id);
-
-                    return (
-                      <tr
-                        className="transition hover:bg-slate-800/30"
-                        key={application.id}
-                      >
-                        <td className="px-5 py-4">
-                          <div className="font-semibold text-white">
+                  return (
+                    <article className="p-5" key={application.id}>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0">
+                          <p className="font-semibold text-white">
                             {application.companyName}
-                          </div>
-                        </td>
-
-                        <td className="px-5 py-4 text-slate-300">
-                          {application.roleTitle}
-                        </td>
-
-                        <td className="px-5 py-4">
-                          <span
-                            className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${
-                              statusStyles[application.status]
-                            }`}
-                          >
-                            {statusLabels[application.status]}
-                          </span>
-                        </td>
-
-                        <td className="px-5 py-4">
-                          <div className="text-sm font-medium text-slate-300">
-                            {formatDate(application.archivedAt)}
-                          </div>
-
-                          <p className="mt-1 text-xs text-slate-600">
-                            Removed from active pipeline
                           </p>
-                        </td>
 
-                        <td className="px-5 py-4">
-                          <div className="flex justify-end">
-                            <RestoreApplicationButton
-                              restoreAction={restoreApplicationWithId}
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                          <p className="mt-1 text-sm leading-6 text-slate-300">
+                            {application.roleTitle}
+                          </p>
+                        </div>
+
+                        <span
+                          className={`inline-flex shrink-0 rounded-full border px-2.5 py-1 text-xs font-medium ${
+                            statusStyles[application.status]
+                          }`}
+                        >
+                          {statusLabels[application.status]}
+                        </span>
+                      </div>
+
+                      <dl className="mt-5">
+                        <div>
+                          <dt className="text-xs font-medium uppercase tracking-wide text-slate-600">
+                            Archived
+                          </dt>
+
+                          <dd className="mt-1 text-sm font-medium text-slate-300">
+                            {formatDate(application.archivedAt)}
+                          </dd>
+                        </div>
+                      </dl>
+
+                      <div className="mt-5 border-t border-slate-800 pt-5">
+                        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                          Action
+                        </p>
+
+                        <RestoreApplicationButton
+                          restoreAction={restoreApplicationWithId}
+                        />
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+
+              <div className="hidden overflow-x-auto md:block">
+                <table className="w-full min-w-[760px] text-left">
+                  <thead className="bg-slate-950/60 text-xs uppercase tracking-wide text-slate-500">
+                    <tr>
+                      <th className="px-5 py-3 font-medium">Company</th>
+                      <th className="px-5 py-3 font-medium">Position</th>
+                      <th className="px-5 py-3 font-medium">Status</th>
+                      <th className="px-5 py-3 font-medium">Archived</th>
+                      <th className="px-5 py-3 text-right font-medium">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="divide-y divide-slate-800">
+                    {applications.map((application) => {
+                      const restoreApplicationWithId =
+                        restoreApplication.bind(null, application.id);
+
+                      return (
+                        <tr
+                          className="transition hover:bg-slate-800/30"
+                          key={application.id}
+                        >
+                          <td className="px-5 py-4">
+                            <div className="font-semibold text-white">
+                              {application.companyName}
+                            </div>
+                          </td>
+
+                          <td className="px-5 py-4 text-slate-300">
+                            {application.roleTitle}
+                          </td>
+
+                          <td className="px-5 py-4">
+                            <span
+                              className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${
+                                statusStyles[application.status]
+                              }`}
+                            >
+                              {statusLabels[application.status]}
+                            </span>
+                          </td>
+
+                          <td className="px-5 py-4">
+                            <div className="text-sm font-medium text-slate-300">
+                              {formatDate(application.archivedAt)}
+                            </div>
+
+                            <p className="mt-1 text-xs text-slate-600">
+                              Removed from active pipeline
+                            </p>
+                          </td>
+
+                          <td className="px-5 py-4">
+                            <div className="flex justify-end">
+                              <RestoreApplicationButton
+                                restoreAction={restoreApplicationWithId}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </section>
 
