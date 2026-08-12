@@ -56,7 +56,7 @@ export default async function ArchivedApplicationsPage() {
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
-      <header className="border-b border-slate-800">
+      <header className="border-b border-slate-800/80 bg-slate-950/90">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link
             className="text-sm font-semibold uppercase tracking-widest text-blue-400 transition hover:text-blue-300"
@@ -69,122 +69,244 @@ export default async function ArchivedApplicationsPage() {
         </div>
       </header>
 
-      <div className="mx-auto max-w-6xl px-6 py-10">
-        <Link
-          className="text-sm font-medium text-blue-400 transition hover:text-blue-300"
-          href="/dashboard"
-        >
-          ← Back to dashboard
-        </Link>
+      <div className="mx-auto max-w-6xl px-6 py-10 sm:py-12">
+        <nav className="flex flex-wrap items-center gap-2 text-sm">
+          <Link
+            className="text-slate-400 transition hover:text-white"
+            href="/dashboard"
+          >
+            Dashboard
+          </Link>
 
-        <div className="mt-6">
-          <h1 className="text-3xl font-bold text-white">
-            Archived applications
-          </h1>
+          <span className="text-slate-700">/</span>
 
-          <p className="mt-2 text-slate-400">
-            Review or restore applications removed from your active
-            dashboard.
-          </p>
-        </div>
+          <Link
+            className="text-slate-400 transition hover:text-white"
+            href="/applications"
+          >
+            Applications
+          </Link>
 
-        <section className="mt-8 overflow-hidden rounded-xl border border-slate-800 bg-slate-900">
-          <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4">
+          <span className="text-slate-700">/</span>
+
+          <span className="text-slate-200">Archived</span>
+        </nav>
+
+        <section className="mt-8 flex flex-col gap-6 border-b border-slate-800 pb-8 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="mb-4 inline-flex rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-slate-300">
+              Archive
+            </div>
+
+            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              Archived applications
+            </h1>
+
+            <p className="mt-3 max-w-2xl text-base leading-7 text-slate-400">
+              Keep inactive opportunities out of your main pipeline without
+              losing their history or details.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <Link
+              className="inline-flex items-center justify-center rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:bg-slate-900 hover:text-white"
+              href="/applications"
+            >
+              Active applications
+            </Link>
+
+            <Link
+              className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
+              href="/applications/new"
+            >
+              + Add application
+            </Link>
+          </div>
+        </section>
+
+        <section className="mt-8 overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/60">
+          <div className="flex flex-col gap-3 border-b border-slate-800 px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-white">
+              <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
+                Stored records
+              </p>
+
+              <h2 className="mt-2 text-xl font-semibold text-white">
                 Archive
               </h2>
 
-              <p className="mt-1 text-sm text-slate-400">
-                Archived records remain safely stored.
+              <p className="mt-1 text-sm leading-6 text-slate-400">
+                Restore an application at any time to return it to your active
+                pipeline.
               </p>
             </div>
 
-            <span className="text-sm text-slate-400">
+            <span className="inline-flex w-fit rounded-full border border-slate-800 bg-slate-950 px-3 py-1.5 text-sm font-medium text-slate-400">
               {applications.length}{" "}
               {applications.length === 1 ? "application" : "applications"}
             </span>
           </div>
 
           {applications.length === 0 ? (
-            <div className="px-6 py-14 text-center">
-              <h3 className="text-lg font-semibold text-white">
+            <div className="px-6 py-16 text-center">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-slate-800 bg-slate-950 text-xl text-slate-500">
+                ↺
+              </div>
+
+              <h3 className="mt-5 text-lg font-semibold text-white">
                 No archived applications
               </h3>
 
-              <p className="mt-2 text-sm text-slate-400">
-                Applications you archive will appear here.
+              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-400">
+                When you archive an opportunity, it will stay safely stored
+                here until you decide to restore it.
               </p>
 
               <Link
-                className="mt-5 inline-flex rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
-                href="/dashboard"
+                className="mt-5 inline-flex rounded-xl border border-slate-700 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-slate-800"
+                href="/applications"
               >
-                Return to dashboard
+                View active applications
               </Link>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[760px] text-left">
-                <thead className="bg-slate-950/50 text-xs uppercase tracking-wide text-slate-400">
-                  <tr>
-                    <th className="px-5 py-3 font-medium">Company</th>
-                    <th className="px-5 py-3 font-medium">Position</th>
-                    <th className="px-5 py-3 font-medium">Status</th>
-                    <th className="px-5 py-3 font-medium">Archived</th>
-                    <th className="px-5 py-3 text-right font-medium">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
+            <>
+              <div className="divide-y divide-slate-800 md:hidden">
+                {applications.map((application) => {
+                  const restoreApplicationWithId =
+                    restoreApplication.bind(null, application.id);
 
-                <tbody className="divide-y divide-slate-800">
-                  {applications.map((application) => {
-                    const restoreApplicationWithId =
-                      restoreApplication.bind(null, application.id);
+                  return (
+                    <article className="p-5" key={application.id}>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="min-w-0">
+                          <p className="font-semibold text-white">
+                            {application.companyName}
+                          </p>
 
-                    return (
-                      <tr
-                        className="transition hover:bg-slate-800/40"
-                        key={application.id}
-                      >
-                        <td className="px-5 py-4 font-medium text-white">
-                          {application.companyName}
-                        </td>
+                          <p className="mt-1 text-sm leading-6 text-slate-300">
+                            {application.roleTitle}
+                          </p>
+                        </div>
 
-                        <td className="px-5 py-4 text-slate-300">
-                          {application.roleTitle}
-                        </td>
+                        <span
+                          className={`inline-flex shrink-0 rounded-full border px-2.5 py-1 text-xs font-medium ${
+                            statusStyles[application.status]
+                          }`}
+                        >
+                          {statusLabels[application.status]}
+                        </span>
+                      </div>
 
-                        <td className="px-5 py-4">
-                          <span
-                            className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${
-                              statusStyles[application.status]
-                            }`}
-                          >
-                            {statusLabels[application.status]}
-                          </span>
-                        </td>
+                      <dl className="mt-5">
+                        <div>
+                          <dt className="text-xs font-medium uppercase tracking-wide text-slate-600">
+                            Archived
+                          </dt>
 
-                        <td className="px-5 py-4 text-slate-400">
-                          {formatDate(application.archivedAt)}
-                        </td>
+                          <dd className="mt-1 text-sm font-medium text-slate-300">
+                            {formatDate(application.archivedAt)}
+                          </dd>
+                        </div>
+                      </dl>
 
-                        <td className="px-5 py-4">
-                          <div className="flex justify-end">
-                            <RestoreApplicationButton
-                              restoreAction={restoreApplicationWithId}
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                      <div className="mt-5 border-t border-slate-800 pt-5">
+                        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                          Action
+                        </p>
+
+                        <RestoreApplicationButton
+                          restoreAction={restoreApplicationWithId}
+                        />
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+
+              <div className="hidden overflow-x-auto md:block">
+                <table className="w-full min-w-[760px] text-left">
+                  <thead className="bg-slate-950/60 text-xs uppercase tracking-wide text-slate-500">
+                    <tr>
+                      <th className="px-5 py-3 font-medium">Company</th>
+                      <th className="px-5 py-3 font-medium">Position</th>
+                      <th className="px-5 py-3 font-medium">Status</th>
+                      <th className="px-5 py-3 font-medium">Archived</th>
+                      <th className="px-5 py-3 text-right font-medium">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="divide-y divide-slate-800">
+                    {applications.map((application) => {
+                      const restoreApplicationWithId =
+                        restoreApplication.bind(null, application.id);
+
+                      return (
+                        <tr
+                          className="transition hover:bg-slate-800/30"
+                          key={application.id}
+                        >
+                          <td className="px-5 py-4">
+                            <div className="font-semibold text-white">
+                              {application.companyName}
+                            </div>
+                          </td>
+
+                          <td className="px-5 py-4 text-slate-300">
+                            {application.roleTitle}
+                          </td>
+
+                          <td className="px-5 py-4">
+                            <span
+                              className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${
+                                statusStyles[application.status]
+                              }`}
+                            >
+                              {statusLabels[application.status]}
+                            </span>
+                          </td>
+
+                          <td className="px-5 py-4">
+                            <div className="text-sm font-medium text-slate-300">
+                              {formatDate(application.archivedAt)}
+                            </div>
+
+                            <p className="mt-1 text-xs text-slate-600">
+                              Removed from active pipeline
+                            </p>
+                          </td>
+
+                          <td className="px-5 py-4">
+                            <div className="flex justify-end">
+                              <RestoreApplicationButton
+                                restoreAction={restoreApplicationWithId}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </section>
+
+        <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-900/30 p-5">
+          <p className="text-sm font-medium text-slate-300">
+            Archiving is reversible.
+          </p>
+
+          <p className="mt-1 text-sm leading-6 text-slate-500">
+            Restoring an application returns it to your dashboard and active
+            application views with its existing details and activity history
+            intact.
+          </p>
+        </div>
       </div>
     </main>
   );

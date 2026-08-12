@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 type ArchiveApplicationButtonProps = {
@@ -12,7 +12,7 @@ function ArchiveSubmitButton() {
 
   return (
     <button
-      className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-60"
+      className="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
       disabled={pending}
       type="submit"
     >
@@ -25,11 +25,18 @@ export function ArchiveApplicationButton({
   archiveAction,
 }: ArchiveApplicationButtonProps) {
   const [isConfirming, setIsConfirming] = useState(false);
+  const confirmationRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    if (isConfirming) {
+      confirmationRef.current?.focus();
+    }
+  }, [isConfirming]);
 
   if (!isConfirming) {
     return (
       <button
-        className="inline-flex items-center justify-center rounded-lg border border-red-900 px-4 py-2.5 text-sm font-semibold text-red-300 transition hover:bg-red-950"
+        className="inline-flex items-center justify-center rounded-lg border border-red-900 px-4 py-2.5 text-sm font-semibold text-red-300 transition hover:bg-red-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
         onClick={() => setIsConfirming(true)}
         type="button"
       >
@@ -39,8 +46,17 @@ export function ArchiveApplicationButton({
   }
 
   return (
-    <div className="rounded-lg border border-red-900 bg-red-950/40 p-4">
-      <p className="text-sm font-medium text-red-200">
+    <div
+      aria-labelledby="archive-confirmation-title"
+      className="rounded-lg border border-red-900 bg-red-950/40 p-4"
+      role="group"
+    >
+      <p
+        className="text-sm font-medium text-red-200 outline-none"
+        id="archive-confirmation-title"
+        ref={confirmationRef}
+        tabIndex={-1}
+      >
         Archive this application?
       </p>
 
@@ -55,7 +71,7 @@ export function ArchiveApplicationButton({
         </form>
 
         <button
-          className="rounded-lg px-4 py-2.5 text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white"
+          className="rounded-lg px-4 py-2.5 text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
           onClick={() => setIsConfirming(false)}
           type="button"
         >
