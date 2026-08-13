@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 
 import { ApplicationForm } from "@/features/applications/components/application-form";
+import { getResumeVersions } from "@/features/settings/server/get-resume-versions";
 
 export default async function NewApplicationPage() {
   const { userId, redirectToSignIn } = await auth();
@@ -10,6 +11,10 @@ export default async function NewApplicationPage() {
   if (!userId) {
     return redirectToSignIn();
   }
+
+  const resumeVersions = await getResumeVersions({
+    ownerId: userId,
+  });
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -80,6 +85,7 @@ export default async function NewApplicationPage() {
           <ApplicationForm
             cancelHref="/applications"
             enableJobImport
+            resumeVersions={resumeVersions}
           />
         </div>
       </div>

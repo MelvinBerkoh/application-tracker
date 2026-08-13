@@ -85,3 +85,15 @@ model ApplicationActivity {
   @@index([applicationId, occurredAt])
   @@map("application_activities")
 }
+
+model ResumeVersion {
+  id        String   @id @default(cuid())
+  ownerId   String   @map("owner_id") @db.VarChar(255)
+  name      String   @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([ownerId, name])
+  @@index([ownerId])
+  @@map("resume_versions")
+}

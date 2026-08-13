@@ -43,25 +43,9 @@ function formatDate(date: Date | null) {
 export function RecentApplicationsTable({
   applications,
 }: RecentApplicationsTableProps) {
-  return (
-    <section className="mt-10 overflow-hidden rounded-xl border border-slate-800 bg-slate-900">
-      <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4">
-        <div>
-          <h2 className="text-lg font-semibold text-white">
-            Recent applications
-          </h2>
-
-          <p className="mt-1 text-sm text-slate-400">
-            Your most recently updated opportunities.
-          </p>
-        </div>
-
-        <span className="text-sm text-slate-400">
-          {applications.length} shown
-        </span>
-      </div>
-
-      {applications.length === 0 ? (
+  if (applications.length === 0) {
+    return (
+      <section className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70">
         <div className="px-6 py-14 text-center">
           <h3 className="text-lg font-semibold text-white">
             No applications yet
@@ -72,13 +56,58 @@ export function RecentApplicationsTable({
           </p>
 
           <Link
-            className="mt-5 inline-flex rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
+            className="mt-5 inline-flex rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
             href="/applications/new"
           >
             Add application
           </Link>
         </div>
-      ) : (
+      </section>
+    );
+  }
+
+  return (
+    <>
+      {/* Mobile application cards */}
+      <section className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70 md:hidden">
+        <div className="divide-y divide-slate-800">
+          {applications.map((application) => (
+            <Link
+              className="group flex items-center justify-between gap-4 px-5 py-5 transition active:bg-slate-800/70"
+              href={`/applications/${application.id}`}
+              key={application.id}
+            >
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-base font-semibold text-white transition group-hover:text-blue-300">
+                  {application.roleTitle}
+                </p>
+
+                <p className="mt-1 truncate text-sm text-slate-400">
+                  {application.companyName}
+                </p>
+              </div>
+
+              <div className="flex shrink-0 items-center gap-3">
+                <span
+                  className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${statusStyles[application.status]}`}
+                >
+                  {statusLabels[application.status]}
+                </span>
+
+                <span
+                  aria-hidden="true"
+                  className="text-lg text-slate-600 transition group-hover:translate-x-0.5 group-hover:text-blue-400"
+                >
+                  ›
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Desktop / tablet table */}
+      <section className="hidden overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/70 md:block">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px] text-left">
             <thead className="bg-slate-950/50 text-xs uppercase tracking-wide text-slate-400">
@@ -101,8 +130,8 @@ export function RecentApplicationsTable({
                     <Link
                       className="text-white transition hover:text-blue-400"
                       href={`/applications/${application.id}`}
-                   >
-                     {application.companyName}
+                    >
+                      {application.companyName}
                     </Link>
                   </td>
 
@@ -130,7 +159,7 @@ export function RecentApplicationsTable({
             </tbody>
           </table>
         </div>
-      )}
-    </section>
+      </section>
+    </>
   );
 }
