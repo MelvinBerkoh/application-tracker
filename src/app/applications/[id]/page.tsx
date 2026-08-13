@@ -4,8 +4,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ArchiveApplicationButton } from "@/features/applications/components/archive-application-button";
+import { ScheduleInterviewDialog } from "@/features/applications/components/schedule-interview-dialog";
+import { UpcomingInterviewCard } from "@/features/applications/components/upcoming-interview-card";
 import { archiveApplication } from "@/features/applications/server/archive-application";
 import { getApplicationById } from "@/features/applications/server/get-application-by-id";
+import { manageInterview } from "@/features/applications/server/manage-interview";
+import { scheduleInterview } from "@/features/applications/server/schedule-interview";
 
 type ApplicationDetailPageProps = {
   params: Promise<{
@@ -42,6 +46,27 @@ function formatDate(date: Date | null) {
 
   return new Intl.DateTimeFormat("en-US", {
     month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}
+
+function formatActivityDate(
+  date: Date,
+  type: string,
+) {
+  if (type === "INTERVIEW") {
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    }).format(date);
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
     day: "numeric",
     year: "numeric",
   }).format(date);
@@ -89,6 +114,38 @@ function formatWorkArrangement(value: string | null) {
   return value.charAt(0) + value.slice(1).toLowerCase();
 }
 
+function activityAccent(type: string) {
+  if (type === "INTERVIEW") {
+    return "border-violet-900/70 bg-violet-950/10";
+  }
+
+  if (type === "FOLLOW_UP") {
+    return "border-amber-900/60 bg-amber-950/10";
+  }
+
+  if (type === "STATUS_CHANGE") {
+    return "border-blue-900/60 bg-blue-950/10";
+  }
+
+  return "border-slate-800 bg-slate-950/30";
+}
+
+function activityDot(type: string) {
+  if (type === "INTERVIEW") {
+    return "bg-violet-400";
+  }
+
+  if (type === "FOLLOW_UP") {
+    return "bg-amber-400";
+  }
+
+  if (type === "STATUS_CHANGE") {
+    return "bg-blue-400";
+  }
+
+  return "bg-slate-500";
+}
+
 export default async function ApplicationDetailPage({
   params,
 }: ApplicationDetailPageProps) {
@@ -112,6 +169,41 @@ export default async function ApplicationDetailPage({
   const archiveApplicationWithId = archiveApplication.bind(
     null,
     application.id,
+  );
+
+  const scheduleInterviewWithId = scheduleInterview.bind(
+    null,
+    application.id,
+  );
+
+  const now = new Date();
+
+  const upcomingInterviews = application.activities
+    .filter(
+      (activity) =>
+        activity.type === "INTERVIEW" &&
+        activity.occurredAt >= now,
+    )
+    .sort(
+      (first, second) =>
+        first.occurredAt.getTime() -
+        second.occurredAt.getTime(),
+    );
+
+  const upcomingInterview = upcomingInterviews[0] ?? null;
+
+  const serializedUpcomingInterview = upcomingInterview
+    ? {
+        id: upcomingInterview.id,
+        title: upcomingInterview.title,
+        description: upcomingInterview.description,
+        occurredAt: upcomingInterview.occurredAt.toISOString(),
+      }
+    : null;
+
+  const manageInterviewWithId = manageInterview.bind(
+    null,
+    upcomingInterview?.id ?? "",
   );
 
   return (
@@ -205,6 +297,10 @@ export default async function ApplicationDetailPage({
               </a>
             ) : null}
 
+            <ScheduleInterviewDialog
+              scheduleAction={scheduleInterviewWithId}
+            />
+
             <Link
               className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
               href={`/applications/${application.id}/edit`}
@@ -275,7 +371,10 @@ export default async function ApplicationDetailPage({
 
               <dl className="mt-6 grid gap-x-8 gap-y-6 sm:grid-cols-2">
                 <div>
-                  <dt className="text-sm text-slate-500">Location</dt>
+                  <dt className="text-sm text-slate-500">
+                    Location
+                  </dt>
+
                   <dd className="mt-1 font-medium text-slate-100">
                     {displayValue(application.location)}
                   </dd>
@@ -285,6 +384,7 @@ export default async function ApplicationDetailPage({
                   <dt className="text-sm text-slate-500">
                     Work arrangement
                   </dt>
+
                   <dd className="mt-1 font-medium text-slate-100">
                     {formatWorkArrangement(application.workArrangement)}
                   </dd>
@@ -294,13 +394,17 @@ export default async function ApplicationDetailPage({
                   <dt className="text-sm text-slate-500">
                     Application source
                   </dt>
+
                   <dd className="mt-1 font-medium text-slate-100">
                     {displayValue(application.source)}
                   </dd>
                 </div>
 
                 <div>
-                  <dt className="text-sm text-slate-500">Created</dt>
+                  <dt className="text-sm text-slate-500">
+                    Created
+                  </dt>
+
                   <dd className="mt-1 font-medium text-slate-100">
                     {formatDate(application.createdAt)}
                   </dd>
@@ -336,7 +440,9 @@ export default async function ApplicationDetailPage({
                   Personal
                 </p>
 
-                <h2 className="mt-2 text-xl font-semibold">Notes</h2>
+                <h2 className="mt-2 text-xl font-semibold">
+                  Notes
+                </h2>
               </div>
 
               {application.notes ? (
@@ -363,14 +469,20 @@ export default async function ApplicationDetailPage({
 
               <dl className="mt-6 space-y-5">
                 <div>
-                  <dt className="text-sm text-slate-500">Name</dt>
+                  <dt className="text-sm text-slate-500">
+                    Name
+                  </dt>
+
                   <dd className="mt-1 font-medium text-slate-100">
                     {displayValue(application.contactName)}
                   </dd>
                 </div>
 
                 <div>
-                  <dt className="text-sm text-slate-500">Email</dt>
+                  <dt className="text-sm text-slate-500">
+                    Email
+                  </dt>
+
                   <dd className="mt-1 break-words font-medium text-slate-100">
                     {application.contactEmail ? (
                       <a
@@ -386,7 +498,10 @@ export default async function ApplicationDetailPage({
                 </div>
 
                 <div>
-                  <dt className="text-sm text-slate-500">LinkedIn</dt>
+                  <dt className="text-sm text-slate-500">
+                    LinkedIn
+                  </dt>
+
                   <dd className="mt-1 font-medium">
                     {application.contactLinkedInUrl ? (
                       <a
@@ -407,55 +522,11 @@ export default async function ApplicationDetailPage({
               </dl>
             </section>
 
-            <section className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
-                    History
-                  </p>
-
-                  <h2 className="mt-2 text-xl font-semibold">
-                    Activity
-                  </h2>
-                </div>
-
-                <span className="rounded-full bg-slate-800 px-2.5 py-1 text-xs font-medium text-slate-400">
-                  {application.activities.length}
-                </span>
-              </div>
-
-              {application.activities.length === 0 ? (
-                <p className="mt-5 text-sm leading-6 text-slate-500">
-                  Activity will appear here when statuses or follow-ups
-                  change.
-                </p>
-              ) : (
-                <ol className="mt-6 space-y-5">
-                  {application.activities.map((activity) => (
-                    <li
-                      className="relative border-l border-slate-700 pb-1 pl-5"
-                      key={activity.id}
-                    >
-                      <span className="absolute -left-1.5 top-1 h-3 w-3 rounded-full border-2 border-slate-900 bg-blue-500" />
-
-                      <p className="text-sm font-semibold text-slate-100">
-                        {activity.title || activity.type}
-                      </p>
-
-                      {activity.description ? (
-                        <p className="mt-1 text-sm leading-6 text-slate-400">
-                          {activity.description}
-                        </p>
-                      ) : null}
-
-                      <p className="mt-2 text-xs text-slate-600">
-                        {formatDate(activity.occurredAt)}
-                      </p>
-                    </li>
-                  ))}
-                </ol>
-              )}
-            </section>
+            <UpcomingInterviewCard
+              interview={serializedUpcomingInterview}
+              manageAction={manageInterviewWithId}
+              upcomingCount={upcomingInterviews.length}
+            />
 
             <section className="rounded-2xl border border-red-950 bg-red-950/10 p-6">
               <p className="text-xs font-semibold uppercase tracking-widest text-red-400">
@@ -479,6 +550,83 @@ export default async function ApplicationDetailPage({
             </section>
           </aside>
         </div>
+
+        <section className="mt-8 rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
+          <div className="flex flex-col gap-4 border-b border-slate-800 pb-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-blue-400">
+                History
+              </p>
+
+              <h2 className="mt-2 text-2xl font-semibold">
+                Activity
+              </h2>
+
+              <p className="mt-2 text-sm leading-6 text-slate-400">
+                Status changes, follow-ups, interviews, and other important
+                updates for this opportunity.
+              </p>
+            </div>
+
+            <span className="w-fit rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-xs font-semibold text-slate-300">
+              {application.activities.length}{" "}
+              {application.activities.length === 1
+                ? "activity"
+                : "activities"}
+            </span>
+          </div>
+
+          {application.activities.length === 0 ? (
+            <div className="mt-6 rounded-xl border border-dashed border-slate-700 bg-slate-950/30 p-6">
+              <p className="text-sm font-medium text-slate-300">
+                No activity yet
+              </p>
+
+              <p className="mt-2 text-sm leading-6 text-slate-500">
+                Status changes, follow-ups, and interviews will appear here.
+              </p>
+            </div>
+          ) : (
+            <ol className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {application.activities.map((activity) => (
+                <li
+                  className={`relative rounded-xl border p-5 ${activityAccent(
+                    activity.type,
+                  )}`}
+                  key={activity.id}
+                >
+                  <div className="flex items-start gap-3">
+                    <span
+                      aria-hidden="true"
+                      className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${activityDot(
+                        activity.type,
+                      )}`}
+                    />
+
+                    <div className="min-w-0">
+                      <p className="font-semibold text-slate-100">
+                        {activity.title || activity.type}
+                      </p>
+
+                      {activity.description ? (
+                        <p className="mt-2 text-sm leading-6 text-slate-400">
+                          {activity.description}
+                        </p>
+                      ) : null}
+
+                      <p className="mt-3 text-xs text-slate-600">
+                        {formatActivityDate(
+                          activity.occurredAt,
+                          activity.type,
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          )}
+        </section>
       </div>
     </main>
   );

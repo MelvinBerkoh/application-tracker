@@ -9,6 +9,7 @@ type GetDashboardStatsParams = {
 export type DashboardStats = {
   totalApplications: number;
   activeInterviews: number;
+  upcomingInterviews: number;
   followUpsDue: number;
   offers: number;
 };
@@ -16,6 +17,8 @@ export type DashboardStats = {
 export async function getDashboardStats({
   ownerId,
 }: GetDashboardStatsParams): Promise<DashboardStats> {
+  const now = new Date();
+
   const activeApplicationFilter = {
     ownerId,
     archivedAt: null,
@@ -24,6 +27,7 @@ export async function getDashboardStats({
   const [
     totalApplications,
     activeInterviews,
+    upcomingInterviews,
     followUpsDue,
     offers,
   ] = await Promise.all([
@@ -40,11 +44,24 @@ export async function getDashboardStats({
       },
     }),
 
+    prisma.applicationActivity.count({
+      where: {
+        type: "INTERVIEW",
+        occurredAt: {
+          gte: now,
+        },
+        application: {
+          ownerId,
+          archivedAt: null,
+        },
+      },
+    }),
+
     prisma.application.count({
       where: {
         ...activeApplicationFilter,
         followUpAt: {
-          lte: new Date(),
+          lte: now,
         },
         status: {
           notIn: ["OFFER", "REJECTED", "WITHDRAWN"],
@@ -63,6 +80,7 @@ export async function getDashboardStats({
   return {
     totalApplications,
     activeInterviews,
+    upcomingInterviews,
     followUpsDue,
     offers,
   };
