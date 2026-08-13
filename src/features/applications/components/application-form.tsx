@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 
+import { JobPostingImportPanel } from "@/features/applications/components/job-posting-import-panel";
 import { createApplication } from "@/features/applications/server/create-application";
 import type { ApplicationActionState } from "@/features/applications/types/application-action-state";
 
@@ -50,6 +51,7 @@ type ApplicationFormProps = {
   cancelHref?: string;
   submitLabel?: string;
   pendingLabel?: string;
+  enableJobImport?: boolean;
 };
 
 type FieldErrorProps = {
@@ -115,6 +117,7 @@ export function ApplicationForm({
   cancelHref = "/dashboard",
   submitLabel = "Save application",
   pendingLabel = "Saving...",
+  enableJobImport = false,
 }: ApplicationFormProps) {
   const [state, formAction, isPending] = useActionState(action, initialState);
 
@@ -194,6 +197,8 @@ export function ApplicationForm({
           </p>
 
           <FieldError errors={state.fieldErrors?.jobUrl} />
+
+          {enableJobImport ? <JobPostingImportPanel /> : null}
         </div>
 
         <div className="mt-5">
@@ -423,9 +428,7 @@ export function ApplicationForm({
           >
             <option value="">Not specified</option>
             <option value="Frontend/Web">Frontend/Web</option>
-            <option value="Software/Full-Stack">
-              Software/Full-Stack
-            </option>
+            <option value="Software/Full-Stack">Software/Full-Stack</option>
             <option value="Adjacent Technical">Adjacent Technical</option>
           </select>
 

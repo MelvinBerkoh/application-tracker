@@ -61,8 +61,9 @@ export default async function NewApplicationPage() {
               </h1>
 
               <p className="mt-3 max-w-2xl text-base leading-7 text-slate-400">
-                Save the important details now so you can track progress,
-                follow-ups, contacts, and interview activity in one place.
+                Paste a job posting URL to auto-fill available details, or
+                enter the opportunity manually. Review everything before
+                saving it to your tracker.
               </p>
             </div>
 
@@ -76,7 +77,10 @@ export default async function NewApplicationPage() {
         </header>
 
         <div className="mt-8">
-          <ApplicationForm cancelHref="/applications" />
+          <ApplicationForm
+            cancelHref="/applications"
+            enableJobImport
+          />
         </div>
       </div>
     </main>
