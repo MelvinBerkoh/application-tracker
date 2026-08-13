@@ -1,5 +1,4 @@
-import { SignInButton } from "@clerk/nextjs";
-import { auth } from "@clerk/nextjs/server";
+import { Show, SignInButton } from "@clerk/nextjs";
 import Link from "next/link";
 
 const features = [
@@ -78,18 +77,101 @@ const features = [
   },
 ];
 
-export default async function HomePage() {
-  const { userId } = await auth();
+function HeaderAuthAction() {
+  return (
+    <Show
+      fallback={
+        <SignInButton forceRedirectUrl="/dashboard" mode="modal">
+          <button
+            className="inline-flex items-center justify-center rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-blue-700 hover:text-white sm:rounded-xl sm:px-4 sm:py-2.5 sm:text-sm"
+            type="button"
+          >
+            Sign in
+          </button>
+        </SignInButton>
+      }
+      when="signed-in"
+    >
+      <Link
+        className="inline-flex items-center justify-center rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-blue-700 hover:text-white sm:rounded-xl sm:px-4 sm:py-2.5 sm:text-sm"
+        href="/dashboard"
+      >
+        <span className="sm:hidden">Dashboard</span>
+        <span className="hidden sm:inline">Open dashboard</span>
+        <span aria-hidden="true" className="ml-1.5 text-blue-400 sm:ml-2">
+          →
+        </span>
+      </Link>
+    </Show>
+  );
+}
 
+function PrimaryAuthAction() {
+  return (
+    <Show
+      fallback={
+        <SignInButton forceRedirectUrl="/dashboard" mode="modal">
+          <button
+            className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-950/40 transition hover:bg-blue-500"
+            type="button"
+          >
+            Start tracking applications
+            <span aria-hidden="true" className="ml-2">
+              →
+            </span>
+          </button>
+        </SignInButton>
+      }
+      when="signed-in"
+    >
+      <Link
+        className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-950/40 transition hover:bg-blue-500"
+        href="/dashboard"
+      >
+        Open your dashboard
+        <span aria-hidden="true" className="ml-2">
+          →
+        </span>
+      </Link>
+    </Show>
+  );
+}
+
+function FinalAuthAction() {
+  return (
+    <Show
+      fallback={
+        <SignInButton forceRedirectUrl="/dashboard" mode="modal">
+          <button
+            className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:bg-slate-200"
+            type="button"
+          >
+            Start tracking →
+          </button>
+        </SignInButton>
+      }
+      when="signed-in"
+    >
+      <Link
+        className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:bg-slate-200"
+        href="/dashboard"
+      >
+        Open dashboard →
+      </Link>
+    </Show>
+  );
+}
+
+export default function HomePage() {
   return (
     <main className="min-h-screen overflow-hidden bg-slate-950 text-white">
-      <header className="relative z-20 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <Link className="flex items-center gap-3" href="/">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-blue-800/80 bg-blue-950 text-blue-400 shadow-sm shadow-blue-950">
+      <header className="relative z-20 border-b border-slate-800/80 bg-slate-950/95 sm:bg-slate-950/80 sm:backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6 sm:py-4">
+          <Link className="flex min-w-0 items-center gap-2.5 sm:gap-3" href="/">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-blue-800/80 bg-blue-950 text-blue-400 shadow-sm shadow-blue-950 sm:h-10 sm:w-10 sm:rounded-xl">
               <svg
                 aria-hidden="true"
-                className="h-5 w-5"
+                className="h-4.5 w-4.5 sm:h-5 sm:w-5"
                 fill="none"
                 viewBox="0 0 24 24"
               >
@@ -107,8 +189,8 @@ export default async function HomePage() {
               </svg>
             </span>
 
-            <div>
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-400">
+            <div className="min-w-0">
+              <p className="truncate text-[11px] font-bold uppercase tracking-[0.14em] text-blue-400 sm:text-sm sm:tracking-[0.18em]">
                 Application Tracker
               </p>
               <p className="hidden text-[11px] text-slate-600 sm:block">
@@ -117,40 +199,23 @@ export default async function HomePage() {
             </div>
           </Link>
 
-          {userId ? (
-            <Link
-              className="inline-flex items-center justify-center rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-blue-700 hover:text-white"
-              href="/dashboard"
-            >
-              Open dashboard
-              <span aria-hidden="true" className="ml-2 text-blue-400">
-                →
-              </span>
-            </Link>
-          ) : (
-            <SignInButton forceRedirectUrl="/dashboard" mode="modal">
-              <button
-                className="inline-flex items-center justify-center rounded-xl border border-slate-700 bg-slate-900 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:border-blue-700 hover:text-white"
-                type="button"
-              >
-                Sign in
-              </button>
-            </SignInButton>
-          )}
+          <div className="ml-3 shrink-0">
+            <HeaderAuthAction />
+          </div>
         </div>
       </header>
 
       <section className="relative">
         <div
           aria-hidden="true"
-          className="absolute left-[10%] top-10 h-[420px] w-[420px] rounded-full bg-blue-600/10 blur-[120px]"
+          className="absolute left-[10%] top-10 hidden h-[420px] w-[420px] rounded-full bg-blue-600/10 blur-[120px] sm:block"
         />
         <div
           aria-hidden="true"
-          className="absolute right-[5%] top-0 h-[500px] w-[500px] rounded-full bg-violet-600/10 blur-[140px]"
+          className="absolute right-[5%] top-0 hidden h-[500px] w-[500px] rounded-full bg-violet-600/10 blur-[140px] sm:block"
         />
 
-        <div className="relative mx-auto grid max-w-7xl gap-14 px-6 pb-20 pt-20 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:pb-24 lg:pt-24">
+        <div className="relative mx-auto grid max-w-7xl gap-14 px-6 pb-20 pt-14 sm:pt-20 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:pb-24 lg:pt-24">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-800/80 bg-blue-950/50 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-blue-300">
               <span className="h-1.5 w-1.5 rounded-full bg-blue-400 shadow-sm shadow-blue-400" />
@@ -170,29 +235,7 @@ export default async function HomePage() {
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              {userId ? (
-                <Link
-                  className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-950/40 transition hover:bg-blue-500"
-                  href="/dashboard"
-                >
-                  Open your dashboard
-                  <span aria-hidden="true" className="ml-2">
-                    →
-                  </span>
-                </Link>
-              ) : (
-                <SignInButton forceRedirectUrl="/dashboard" mode="modal">
-                  <button
-                    className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-blue-950/40 transition hover:bg-blue-500"
-                    type="button"
-                  >
-                    Start tracking applications
-                    <span aria-hidden="true" className="ml-2">
-                      →
-                    </span>
-                  </button>
-                </SignInButton>
-              )}
+              <PrimaryAuthAction />
 
               <a
                 className="inline-flex items-center justify-center rounded-xl border border-slate-700 bg-slate-900/40 px-6 py-3.5 text-sm font-semibold text-slate-300 transition hover:border-slate-600 hover:bg-slate-900 hover:text-white"
@@ -229,7 +272,7 @@ export default async function HomePage() {
           <div className="relative lg:pl-8">
             <div
               aria-hidden="true"
-              className="absolute -inset-8 rounded-[40px] bg-blue-600/5 blur-3xl"
+              className="absolute -inset-8 hidden rounded-[40px] bg-blue-600/5 blur-3xl sm:block"
             />
 
             <div className="relative overflow-hidden rounded-3xl border border-slate-700/80 bg-slate-900/70 p-2 shadow-2xl shadow-black/50">
@@ -404,9 +447,9 @@ export default async function HomePage() {
               </h2>
 
               <p className="mt-4 max-w-lg text-base leading-7 text-slate-400">
-                The tracker keeps the information that matters attached to
-                each opportunity, so you always know where things stand and
-                what comes next.
+                The tracker keeps the information that matters attached to each
+                opportunity, so you always know where things stand and what
+                comes next.
               </p>
             </div>
 
@@ -452,23 +495,7 @@ export default async function HomePage() {
           </div>
 
           <div className="mt-7 lg:mt-0">
-            {userId ? (
-              <Link
-                className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:bg-slate-200"
-                href="/dashboard"
-              >
-                Open dashboard →
-              </Link>
-            ) : (
-              <SignInButton forceRedirectUrl="/dashboard" mode="modal">
-                <button
-                  className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-slate-950 transition hover:bg-slate-200"
-                  type="button"
-                >
-                  Start tracking →
-                </button>
-              </SignInButton>
-            )}
+            <FinalAuthAction />
           </div>
         </div>
       </section>
