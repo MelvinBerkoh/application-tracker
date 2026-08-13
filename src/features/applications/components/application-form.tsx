@@ -45,6 +45,11 @@ export type ApplicationFormValues = {
   notes?: string | null;
 };
 
+type ResumeVersionOption = {
+  id: string;
+  name: string;
+};
+
 type ApplicationFormProps = {
   action?: ApplicationFormAction;
   initialValues?: ApplicationFormValues;
@@ -52,6 +57,7 @@ type ApplicationFormProps = {
   submitLabel?: string;
   pendingLabel?: string;
   enableJobImport?: boolean;
+  resumeVersions?: ResumeVersionOption[];
 };
 
 type FieldErrorProps = {
@@ -118,8 +124,20 @@ export function ApplicationForm({
   submitLabel = "Save application",
   pendingLabel = "Saving...",
   enableJobImport = false,
+  resumeVersions = [],
 }: ApplicationFormProps) {
   const [state, formAction, isPending] = useActionState(action, initialState);
+
+  const currentResumeVersion = initialValues.resumeVersion?.trim() ?? "";
+
+  const hasCurrentResumeVersion =
+    currentResumeVersion.length > 0 &&
+    resumeVersions.some(
+      (resumeVersion) => resumeVersion.name === currentResumeVersion,
+    );
+
+  const shouldShowLegacyResumeVersion =
+    currentResumeVersion.length > 0 && !hasCurrentResumeVersion;
 
   return (
     <form action={formAction} className="space-y-6">
@@ -422,19 +440,35 @@ export function ApplicationForm({
 
           <select
             className={inputClasses}
-            defaultValue={initialValues.resumeVersion ?? ""}
+            defaultValue={currentResumeVersion}
             id="resumeVersion"
             name="resumeVersion"
           >
             <option value="">Not specified</option>
-            <option value="Frontend/Web">Frontend/Web</option>
-            <option value="Software/Full-Stack">Software/Full-Stack</option>
-            <option value="Adjacent Technical">Adjacent Technical</option>
+
+            {shouldShowLegacyResumeVersion ? (
+              <option value={currentResumeVersion}>
+                {currentResumeVersion} · saved on this application
+              </option>
+            ) : null}
+
+            {resumeVersions.map((resumeVersion) => (
+              <option key={resumeVersion.id} value={resumeVersion.name}>
+                {resumeVersion.name}
+              </option>
+            ))}
           </select>
 
           <p className={helperClasses}>
             Track which résumé was submitted so you know what the employer
-            received.
+            received.{" "}
+            <Link
+              className="font-medium text-blue-400 transition hover:text-blue-300"
+              href="/settings"
+            >
+              Manage résumé versions
+            </Link>
+            .
           </p>
 
           <FieldError errors={state.fieldErrors?.resumeVersion} />

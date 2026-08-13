@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { ApplicationForm } from "@/features/applications/components/application-form";
 import { getApplicationById } from "@/features/applications/server/get-application-by-id";
 import { updateApplication } from "@/features/applications/server/update-application";
+import { getResumeVersions } from "@/features/settings/server/get-resume-versions";
 
 type EditApplicationPageProps = {
   params: Promise<{
@@ -32,10 +33,15 @@ export default async function EditApplicationPage({
 
   const { id } = await params;
 
-  const application = await getApplicationById({
-    applicationId: id,
-    ownerId: userId,
-  });
+  const [application, resumeVersions] = await Promise.all([
+    getApplicationById({
+      applicationId: id,
+      ownerId: userId,
+    }),
+    getResumeVersions({
+      ownerId: userId,
+    }),
+  ]);
 
   if (!application) {
     notFound();
@@ -151,6 +157,7 @@ export default async function EditApplicationPage({
               notes: application.notes,
             }}
             pendingLabel="Updating..."
+            resumeVersions={resumeVersions}
             submitLabel="Update application"
           />
         </div>

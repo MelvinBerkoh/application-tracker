@@ -94,7 +94,16 @@ export default async function DashboardPage() {
             Application Tracker
           </Link>
 
-          <UserButton />
+          <div className="flex items-center gap-4">
+            <Link
+              className="text-sm font-medium text-slate-400 transition hover:text-white"
+              href="/settings"
+            >
+              Settings
+            </Link>
+
+            <UserButton />
+          </div>
         </div>
       </header>
 
@@ -218,9 +227,7 @@ export default async function DashboardPage() {
                 Pipeline
               </p>
 
-              <h2 className="mt-2 text-2xl font-bold">
-                Recent applications
-              </h2>
+              <h2 className="mt-2 text-2xl font-bold">Recent applications</h2>
 
               <p className="mt-1 text-sm text-slate-400">
                 Your most recently updated opportunities.
