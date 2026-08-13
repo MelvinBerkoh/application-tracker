@@ -2,8 +2,10 @@ import { UserButton } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 
+import { DashboardAttentionPanel } from "@/features/applications/components/dashboard-attention-panel";
 import { RecentApplicationsTable } from "@/features/applications/components/recent-applications-table";
 import { getDashboardStats } from "@/features/applications/server/get-dashboard-stats";
+import { getNextInterview } from "@/features/applications/server/get-next-interview";
 import { getRecentApplications } from "@/features/applications/server/get-recent-applications";
 
 export default async function DashboardPage() {
@@ -13,11 +15,14 @@ export default async function DashboardPage() {
     return redirectToSignIn();
   }
 
-  const [stats, recentApplications] = await Promise.all([
+  const [stats, recentApplications, nextInterview] = await Promise.all([
     getDashboardStats({
       ownerId: userId,
     }),
     getRecentApplications({
+      ownerId: userId,
+    }),
+    getNextInterview({
       ownerId: userId,
     }),
   ]);
@@ -28,26 +33,55 @@ export default async function DashboardPage() {
       description: "Active opportunities",
       value: stats.totalApplications,
       href: "/applications",
+      accent: "blue",
     },
     {
       label: "Active interviews",
       description: "In the hiring process",
       value: stats.activeInterviews,
       href: null,
+      accent: "violet",
+    },
+    {
+      label: "Upcoming interviews",
+      description: "Meetings scheduled",
+      value: stats.upcomingInterviews,
+      href: null,
+      accent: "cyan",
     },
     {
       label: "Follow-ups due",
       description: "Need your attention",
       value: stats.followUpsDue,
       href: "/applications/follow-ups",
+      accent: "amber",
     },
     {
       label: "Offers",
       description: "Applications with offers",
       value: stats.offers,
       href: "/applications?status=OFFER",
+      accent: "emerald",
     },
-  ];
+  ] as const;
+
+  const serializedNextInterview = nextInterview
+    ? {
+        applicationId: nextInterview.application.id,
+        companyName: nextInterview.application.companyName,
+        roleTitle: nextInterview.application.roleTitle,
+        title: nextInterview.title,
+        occurredAt: nextInterview.occurredAt.toISOString(),
+      }
+    : null;
+
+  const accentStyles = {
+    blue: "text-blue-400",
+    violet: "text-violet-400",
+    cyan: "text-cyan-400",
+    amber: "text-amber-400",
+    emerald: "text-emerald-400",
+  } as const;
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -113,14 +147,16 @@ export default async function DashboardPage() {
         </nav>
 
         <section className="mt-8">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {dashboardCards.map(
-              ({ label, description, value, href }) => {
+              ({ label, description, value, href, accent }) => {
                 const cardContent = (
                   <>
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="text-sm font-medium text-slate-300">
+                        <p
+                          className={`text-sm font-semibold ${accentStyles[accent]}`}
+                        >
                           {label}
                         </p>
 
@@ -169,6 +205,11 @@ export default async function DashboardPage() {
             )}
           </div>
         </section>
+
+        <DashboardAttentionPanel
+          followUpsDue={stats.followUpsDue}
+          nextInterview={serializedNextInterview}
+        />
 
         <section className="mt-10">
           <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
