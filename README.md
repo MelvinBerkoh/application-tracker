@@ -36,18 +36,6 @@ Built with **Next.js, TypeScript, PostgreSQL, Prisma, Clerk, and Tailwind CSS**.
 
 <img src="docs/screenshots/mobile-dashboard.png" alt="Application Tracker mobile dashboard" width="380" />
 
-### Dashboard
-
-![Application Tracker dashboard](docs/screenshots/dashboard.png)
-
-### Application Management
-
-![Application form](docs/screenshots/application-form.png)
-
-### Mobile Experience
-
-![Application Tracker mobile dashboard](docs/screenshots/mobile-dashboard.png)
-
 ---
 
 ## Features
